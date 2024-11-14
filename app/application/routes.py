@@ -103,4 +103,5 @@ def find_application_by_name(name):
 @login_required
 @application.route('/fetch_all', methods=['GET'])
 def fetch_all_applications():
+    # all_allplications = { 'data': db.session.query(Application).all() }
     return jsonify(db.session.query(Application).all())
