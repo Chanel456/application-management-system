@@ -37,9 +37,10 @@ def create():
 @login_required
 @application.route('/update', methods=['POST', 'GET'])
 def update():
-    form = ApplicationForm()
     application_id = request.args.get('application_id')
     retrieved_application = find_application_by_id(application_id)
+    form = ApplicationForm(obj = retrieved_application)
+
     if request.method == 'POST' and form.validate_on_submit():
         updated_application = form.data
         updated_application.pop('csrf_token', None)
@@ -103,5 +104,4 @@ def find_application_by_name(name):
 @login_required
 @application.route('/fetch_all', methods=['GET'])
 def fetch_all_applications():
-    # all_allplications = { 'data': db.session.query(Application).all() }
     return jsonify(db.session.query(Application).all())

@@ -9,11 +9,11 @@
     <form action="{{ url_for('application.update', application_id = application.application_id) }}" method="POST">
       {{ form.hidden_tag() }}
       <dl>
-        {{ render_field(form.name, class='form-control mt-4', placeholder='Application name', value=application.name) }}
-        {{ render_field(form.team_name, class='form-control', placeholder='Development team', value=application.team_name) }}
-        {{ render_field(form.team_email, class='form-control', placeholder='Development team email', value=application.team_email) }}
-        {{ render_field(form.url, class='form-control', value=application.url)}}
-        {{ render_field(form.swagger_link, class='form-control', placeholder='Team name', value=application.swagger_link) }}
+        {{ render_field(form.name, class='form-control mt-4', placeholder='Application name') }}
+        {{ render_field(form.team_name, class='form-control', placeholder='Development team') }}
+        {{ render_field(form.team_email, class='form-control', placeholder='Development team email') }}
+        {{ render_field(form.url, class='form-control')}}
+        {{ render_field(form.swagger_link, class='form-control', placeholder='Team name') }}
         <div class="form-floating">
           <select id="{{ form.status.id }}" name ="{{ form.status.name }}" class="form-select">
             {% for option in form.status %}
