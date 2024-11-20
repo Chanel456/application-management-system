@@ -15,8 +15,8 @@ def test_create(client, app):
             response = client.post('/create',
                                    data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                                          'url': 'https://exampleapp.com',
-                                         'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': None,
-                                         'extra_info': None, 'status': 'Down'})
+                                         'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone',
+                                         'extra_info': None, 'production_pods': 1})
             assert response.status_code == 200
             assert Application.query.count() == 1
             assert Application.query.first().name == 'Example App'
@@ -32,14 +32,14 @@ def test_update(client, app):
     client.post('/create',
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                       'url': 'https://exampleapp.com',
-                      'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': None,
-                      'extra_info': None, 'status': 'Down'})
+                      'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone',
+                      'extra_info': None, 'production_pods': 1})
 
     response = client.post('/update?application_id=1',
                            data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'newteamemail@gmail.com',
                                  'url': 'https://exampleapp.com',
-                                 'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': None,
-                                 'extra_info': None, 'status': 'Down'})
+                                 'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone',
+                                 'extra_info': None, 'production_pods': 1})
     with app.app_context():
         assert response.status_code == 200
         assert Application.query.count() == 1
@@ -58,8 +58,8 @@ def test_delete_admin_passes(client, app):
     client.post('/create',
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                       'url': 'https://exampleapp.com',
-                      'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': None,
-                      'extra_info': None, 'status': 'Down'})
+                      'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket':'https://bitbucket.com/repos/exampleappone',
+                      'extra_info': None, 'production_pods': 1})
 
 
     with app.app_context():
@@ -83,8 +83,8 @@ def test_delete_regular_fails(client, app):
     client.post('/create',
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                       'url': 'https://exampleapp.com',
-                      'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': None,
-                      'extra_info': None, 'status': 'Down'})
+                      'swagger_link': 'https://exampleapp.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone',
+                      'extra_info': None, 'production_pods': 1})
 
 
     with app.app_context():

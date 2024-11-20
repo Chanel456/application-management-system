@@ -10,8 +10,8 @@ class RegistrationForm(FlaskForm):
     account_type = RadioField('Select Account Type:',[InputRequired()], choices=[('admin','Admin'),('regular','Regular')])
     email = EmailField('Email', [DataRequired()])
     first_name = StringField('First Name', [DataRequired(), validators.Length(min=2, max=15), validators.Regexp('^[A-Za-z]+$', message='First name must only contain alphabetic characters')])
-    password = PasswordField('Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character and be at least 7 characters long'), validators.Length(min=7, max=20), validators.EqualTo('confirm_password', message='Passwords must match')])
-    confirm_password = PasswordField('Confirm Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character and be at least 7 characters long'), validators.EqualTo('password', message='Passwords do not match')])
+    password = PasswordField('Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character [!@#$%^&*()_+] and be at least 7 characters long'), validators.Length(min=7, max=20), validators.EqualTo('confirm_password', message='Passwords must match')])
+    confirm_password = PasswordField('Confirm Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character [!@#$%^&*()_+] and be at least 7 characters long'), validators.EqualTo('password', message='Passwords do not match')])
 
 class LoginForm(FlaskForm):
     email = EmailField('Email', [DataRequired()])

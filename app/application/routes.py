@@ -20,13 +20,15 @@ def create():
             flash('An application with this email address already exists within the system', category='error')
         elif form.validate_on_submit():
             try:
-                new_application = Application(name=form.name.data, owner_id=current_user.id , team_email=form.team_email.data,
-                                        team_name=form.team_name.data, url=form.url.data, swagger_link=form.swagger_link.data, status=form.status.data)
+                new_application = Application(name=form.name.data , team_email=form.team_email.data,team_name=form.team_name.data,
+                                              url=form.url.data, swagger=form.swagger.data, bitbucket=form.bitbucket.data,
+                                              production_pods=form.production_pods.data, extra_info= form.extra_info.data)
                 db.session.add(new_application)
                 db.session.commit()
             except SQLAlchemyError as err:
                 db.session.rollback()
-                logging.error('Unable to create application: %s, {err}', form.name.data)
+                logging.error('Unable to create application: %s', form.name.data)
+                logging.error(err)
                 flash('Unable to create application', category='error')
             else:
                 logging.info('Application %s created successfully', form.name.data)
@@ -74,7 +76,8 @@ def delete():
                 db.session.commit()
             except SQLAlchemyError as err:
                 db.session.rollback()
-                logging.error('Unable to delete application: %s {err}', retrieved_application.name)
+                logging.error('Unable to delete application: %s', retrieved_application.name)
+                logging.error(err)
                 flash('Unable to delete application', category='error')
             else:
                 logging.info('Application: %s deleted successfully', retrieved_application.name)
@@ -90,7 +93,8 @@ def find_application_by_id(application_id):
         return retrieved_application
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database {err}')
+        logging.error('Error occurred whilst querying the database')
+        logging.error(err)
 
 def find_application_by_name(name):
     try:
@@ -98,9 +102,9 @@ def find_application_by_name(name):
         return retrieved_application
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database {err}')
+        logging.error('Error occurred whilst querying the database')
+        logging.error(err)
 
-# see if i need these endpoints, i might remove.
 @login_required
 @application.route('/fetch_all', methods=['GET'])
 def fetch_all_applications():

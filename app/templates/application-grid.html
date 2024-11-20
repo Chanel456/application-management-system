@@ -15,11 +15,14 @@
                 <th></th>
                 <th>Application Name</th>
                 <th>Development Team</th>
+                <th>Production Pods</th>
                 <th>Status</th>
                 <th>Actions</th>
                 <th>Development team email</th>
                 <th>Application Url</th>
-                <th>Swagger link</th>
+                <th>Swagger</th>
+                <th>Bitbucket</th>
+                <th>Extra Info</th>
             </tr>
             </thead>
             <tbody>
@@ -28,6 +31,7 @@
                 <td></td>
                 <td>{{item.name}}</td>
                 <td>{{item.team_name}}</td>
+                <td>{{item.production_pods}}</td>
                 <td>{{item.url}}</td>
                 <td>
                     <a href="{{url_for('application.update', application_id = item.application_id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
@@ -37,7 +41,9 @@
                 </td>
                 <td>{{item.team_email}}</td>
                 <td>{{item.url}}</td>
-                <td>{{item.swagger_link}}</td>
+                <td>{{item.swagger}}</td>
+                <td>{{item.bitbucket}}</td>
+                <td>{{item.extra_info}}</td>
             </tr>
         <div class="modal fade" id="modeldeleteapplication{{item.application_id}}" tabindex="-1" aria-labelledby="modelDeleteApplicationLabel" aria-hidden="true">
             <div class="modal-dialog">

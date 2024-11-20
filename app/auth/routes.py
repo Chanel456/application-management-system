@@ -1,5 +1,5 @@
 import logging
-from flask import render_template, request, flash, redirect, url_for, jsonify
+from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
@@ -28,7 +28,7 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
-    logging.info('User: %s successfully logged out', current_user.first_name)
+    logging.info('User: %s successfully logged out', current_user.email)
     logout_user()
     return redirect(url_for('auth.login'))
 
@@ -48,13 +48,19 @@ def register():
                 db.session.commit()
             except SQLAlchemyError as err:
                 db.session.rollback()
-                logging.error('Unable to register user: %s, {err}', form.first_name.data)
+                logging.error('Unable to register user: %s', form.email.data)
+                logging.error(err)
                 flash('Unable to register user', category='error')
             else:
-                logging.info('%s account created successfully', form.first_name.data)
+                logging.info('%s account created successfully', form.email.data)
                 flash('Account created successfully!', category='success')
                 return redirect(url_for('auth.login'))
     return render_template('auth/register.html', user=current_user, form=form)
 
 def find_user_by_email(email):
-    return User.query.filter_by(email=email).first()
+    try:
+        return User.query.filter_by(email=email).first()
+    except SQLAlchemyError as err:
+        db.session.rollback()
+        logging.error('Error occurred whilst querying the database')
+        logging.error(err)
