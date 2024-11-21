@@ -12,4 +12,4 @@ views = Blueprint('views', __name__)
 def dashboard():
     form = ApplicationForm()
     applications = db.session.query(Application).all()
-    return render_template('application-grid.html', user=current_user, form=form, list=applications)
+    return render_template('grid.html', user=current_user, form=form, list=applications)

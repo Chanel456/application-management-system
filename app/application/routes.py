@@ -12,6 +12,8 @@ from app.models.application import Application
 @login_required
 @application.route('/create', methods=['GET', 'POST'])
 def create():
+    """Creates an application in the database using the information entered by the form"""
+
     form = ApplicationForm()
     if request.method == 'POST':
         retrieved_application = find_application_by_name(form.name.data)
@@ -39,6 +41,8 @@ def create():
 @login_required
 @application.route('/update', methods=['POST', 'GET'])
 def update():
+    """Updates an applications details in the database. This endpoint takes a query parameter of the applications id"""
+
     application_id = request.args.get('application_id')
     retrieved_application = find_application_by_id(application_id)
     form = ApplicationForm(obj = retrieved_application)
@@ -67,6 +71,9 @@ def update():
 @login_required
 @application.route('/delete', methods=['GET', 'POST'])
 def delete():
+    """This function deletes and application from the database. This action can only be completed my admin user.
+    This function takes a query parameter of the application id"""
+
     if request.method == 'GET' and current_user.is_admin:
         application_id = request.args.get('application_id')
         retrieved_application = find_application_by_id(application_id)
@@ -88,6 +95,7 @@ def delete():
     return redirect(url_for('views.dashboard'))
 
 def find_application_by_id(application_id):
+    """Find an application in the database using the applications id"""
     try:
         retrieved_application = Application.query.get(application_id)
         return retrieved_application
@@ -97,6 +105,7 @@ def find_application_by_id(application_id):
         logging.error(err)
 
 def find_application_by_name(name):
+    """Finds an application in the database by the application name"""
     try:
         retrieved_application = Application.query.filter_by(name=name).first()
         return retrieved_application

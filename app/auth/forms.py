@@ -7,6 +7,22 @@ from app.models.user import User
 
 
 class RegistrationForm(FlaskForm):
+    """
+    A class to represents the input fields for registering a new user for this application
+
+    Fields
+    -----------
+    account_type: radio
+        The type of account to be created. Admin or regular
+    email: email
+        The email address of the user signing up for the account
+    first_name: text
+        The first name of the person signing up for the account
+    password: password
+        The password used to sign to the created account
+    confirm_password: password
+        Confirm the password used to sign to the account
+    """
     account_type = RadioField('Select Account Type:',[InputRequired()], choices=[('admin','Admin'),('regular','Regular')])
     email = EmailField('Email', [DataRequired()])
     first_name = StringField('First Name', [DataRequired(), validators.Length(min=2, max=15), validators.Regexp('^[A-Za-z]+$', message='First name must only contain alphabetic characters')])
@@ -14,6 +30,16 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character [!@#$%^&*()_+] and be at least 7 characters long'), validators.EqualTo('password', message='Passwords do not match')])
 
 class LoginForm(FlaskForm):
+    """
+    A class to represents the input fields for signing in to the application
+
+    Fields
+    -------------
+    email: email
+        The email address for the account
+    password: password
+        The password linked to the email address used to sign in to the account
+    """
     email = EmailField('Email', [DataRequired()])
     password = PasswordField('Password', [DataRequired()])
 

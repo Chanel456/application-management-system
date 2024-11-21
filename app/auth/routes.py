@@ -11,13 +11,14 @@ from app.auth import auth
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    """Logs in a user to the application based on the credentials submitted in the form"""
     form = LoginForm()
     if request.method == 'POST':
         user = find_user_by_email(form.email.data)
         if user:
             if form.validate_on_submit():
                    login_user(user, remember = True)
-                   logging.info('%s logged in successfully', user.first_name)
+                   logging.info('%s logged in successfully', user.email)
                    flash('Logged in successfully.', category='success')
                    return redirect(url_for('views.dashboard'))
         else:
@@ -28,12 +29,14 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
+    """Logs out a user and redirects them to the login page"""
     logging.info('User: %s successfully logged out', current_user.email)
     logout_user()
     return redirect(url_for('auth.login'))
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
+    """Registers a user and allows them to access the web application"""
     form = RegistrationForm()
     if request.method == 'POST':
         user = find_user_by_email(form.email.data)
@@ -58,6 +61,7 @@ def register():
     return render_template('auth/register.html', user=current_user, form=form)
 
 def find_user_by_email(email):
+    """Searched for a user in the database filtering by email address"""
     try:
         return User.query.filter_by(email=email).first()
     except SQLAlchemyError as err:

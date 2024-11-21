@@ -13,6 +13,8 @@ db = SQLAlchemy()
 DB_NAME = 'database.db'
 
 def create_app(config_class=Config):
+    """Initialises the flask app with config, registers the blueprints and, initialises the login manager """
+
     app.config.from_object(config_class)
     logging.basicConfig(level= logging.INFO, format = f'%(asctime)s - %(levelname)s : %(message)s')
     db.init_app(app)
@@ -34,6 +36,7 @@ def create_app(config_class=Config):
             db.create_all()
             logging.info('Database created')
 
+    # Initialise login manager
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
@@ -46,8 +49,15 @@ def create_app(config_class=Config):
 
 @app.route('/')
 def redirect_to_home():
-   return redirect(url_for('views.dashboard'))
+    """Redirects base url to the dashboard html"""
+    return redirect(url_for('views.dashboard'))
 
 @app.errorhandler(404)
-def handle_not_found_error(error):
+def handle_not_found_error():
+    """Redirects to 404.html if a HTTP 404 error is thrown"""
     return render_template('error/404.html', user=current_user), 404
+
+@app.errorhandler(500)
+def handle_internal_server_error():
+    """Redirects to 500.html if a 500 error is thrown"""
+    return render_template('error/500.html', user=current_user), 500

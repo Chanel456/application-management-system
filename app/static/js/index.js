@@ -6,7 +6,7 @@ DataTable.defaults.layout = {
 };
 
 function format ( d ) {
-
+//This function return the data to be presented in the child row of the grid for a parent row
   return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td>Development team email:</td>'+
