@@ -4,8 +4,8 @@ import pytest
 from werkzeug.security import generate_password_hash
 
 from app import create_app, db
-from app.application.forms import ApplicationForm
 from app.models.application import Application
+from app.models.server import Server
 from app.models.user import User
 from config.test_config import TestConfig
 
@@ -51,11 +51,6 @@ def auth(client):
     return AuthActions(client)
 
 @pytest.fixture
-def application_form(app):
-    with app.app_context():
-        return ApplicationForm()
-
-@pytest.fixture
 def init_user_table(app):
     with app.app_context():
         user1 = User(first_name='testuser1', email='test.user1@gmail.com',
@@ -88,5 +83,17 @@ def init_application_table(app):
         db.session.add(application1)
         db.session.add(application2)
         db.session.add(application3)
+        db.session.commit()
+        yield db
+
+@pytest.fixture
+def init_server_table(app):
+    with app.app_context():
+        server1 = Server(name='exampleserver1', cpu=123, memory=123, location='Walthamstow')
+        server2 = Server(name='exampleserver2', cpu=456, memory=456, location='Harrow')
+        server3 = Server(name='exampleserver3', cpu=789, memory=789, location='Surrey')
+        db.session.add(server1)
+        db.session.add(server2)
+        db.session.add(server3)
         db.session.commit()
         yield db

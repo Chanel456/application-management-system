@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-2">
+    <div class="bg-light rounded">
+        <div class="row">
+            <h2>View Servers
+                <a class="button btn btn-success float-lg-end" href="{{url_for('server.create_server')}}">Add New Server</a>
+            </h2>
+        </div>
+        <table id="serverTable" class="display table table-hover table-striped table-light no-wrap">
+            <thead class="table-dark">
+            <tr>
+                <th>Server Name</th>
+                <th>Location</th>
+                <th>CPU</th>
+                <th>Memory</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in list %}
+            <tr>
+                <td>{{item.name}}</td>
+                <td>{{item.location}}</td>
+                <td>{{item.cpu}}</td>
+                <td>{{item.memory}}</td>
+                <td>
+                    <a href="{{url_for('server.update_server', server_id = item.id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
+                    {% if user.is_admin %}
+                    <a href="/delete/{{item.server_id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteserver{{item.server_id}}"><i class="bi bi-trash fs-4 text-danger mx-1"></i></a>
+                    {% endif %}
+                </td>
+            </tr>
+        <div class="modal fade" id="modeldeleteserver{{item.server_id}}" tabindex="-1" aria-labelledby="modelDeleteServerLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-x-circle text-danger" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                            </svg>
+                            <h3>Are you sure?</h3>
+                            <p>Are you sure you want to delete the server {{item.name}}. This process cannot be undone</p>
+                            <div>
+                                <a href="{{url_for('views.grid')}}" class="button btn btn-secondary">Cancel</a>
+                                <a href="{{url_for('server.delete_server', server_id = item.id)}}" class="button btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

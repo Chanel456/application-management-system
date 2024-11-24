@@ -42,6 +42,10 @@ function format ( d ) {
         defaultContent: ''
       },
       {
+            targets: 5,
+            className: 'dt-body-right'
+      },
+      {
         targets: [6,7,8,9,10],
         visible: false
       },
@@ -89,3 +93,19 @@ function format ( d ) {
             tr.addClass('shown');
         }
     } );
+
+var table2 = $('#serverTable').DataTable({
+    columnDefs: [
+        {
+            targets: 4,
+            className: 'dt-body-right'
+        }
+      ],
+    layout: {
+            topStart: {
+                buttons: ['excel']
+            },
+            topEnd: 'search',
+            bottom: ['info', 'pageLength', 'paging']
+      }
+})

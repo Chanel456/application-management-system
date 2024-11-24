@@ -9,21 +9,21 @@ class ApplicationForm(FlaskForm):
     Fields
     --------------
     name: text
-        name of the application
+        Name of the application
     team_name: text
-       name of the development team who owns the application
+       Name of the development team who owns the application
     url: url
-        url for the application
+        Url for the application
     swagger: url
-        swagger link for the application if there is any
+        Swagger link for the application if there is any
     bitbucket: url
-        url of the bitbucket repo for the application
+        Url of the bitbucket repo for the application
     extra_info: text
-        any extra information other should know about the application
+        Any extra information other should know about the application
     production_pods: number
-        the number of pods this application has up in production
-
+        The number of pods this application has up in production
     """
+
     name = StringField('Application Name', [DataRequired(), validators.Length(min=2, max=70), validators.Regexp('^[a-zA-Z- ]+$', message='Application name must only contain alphabetic characters and hyphens')])
     team_name = StringField('Development team', [DataRequired(), validators.Length(min=3, max=30), validators.Regexp('^[a-zA-Z- ]+$', message='Team name must only contain alphabetic characters hyphens')])
     team_email = EmailField('Development team email', [DataRequired()])

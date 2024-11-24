@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% from "_formhelpers.html" import render_field %}
+
+<div class="container mt-2">
+    <h4>Update Server</h4>
+    <form action="{{ url_for('server.update_server', server_id = server.id) }}" method="POST">
+    {{ form.hidden_tag() }}
+    <dl>
+        {{ render_field(form.name, class='form-control mt-4', placeholder='Name') }}
+        {{ render_field(form.cpu, class='form-control', placeholder='CPU') }}
+        {{ render_field(form.memory, class='form-control', placeholder='Memory') }}
+        {{ render_field(form.location, class='form-control', placeholder='Location') }}
+    </dl>
+    <div class="d-grid gap-2 text-center">
+        <button class="btn btn-primary" type="submit">Update Server</button>
+    </div>
+</form>
+</div>
+
+{% endblock %}

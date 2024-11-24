@@ -92,16 +92,16 @@ def test_delete_regular_fails(client, app):
         assert application is not None
 
     with client:
-        client.get('/delete?employee_id=1')
+        client.get('/delete?application_id=1')
         assert current_user.is_admin == False
         application = Application.query.filter_by(name='Example App').first()
         assert application is not None
 
 def test_find_app_by_name_found(init_application_table):
-    employee = find_application_by_name('Example App One')
-    assert employee is not None
-    assert employee.name == 'Example App One'
-    assert employee.url == 'https://exampleappone.com'
+    application = find_application_by_name('Example App One')
+    assert application is not None
+    assert application.name == 'Example App One'
+    assert application.url == 'https://exampleappone.com'
 
 def test_find_app_by_name_not_found(init_application_table):
     application = find_application_by_name('Example App Not Found')

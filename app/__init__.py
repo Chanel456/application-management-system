@@ -23,11 +23,13 @@ def create_app(config_class=Config):
     from app.views import views
     from app.auth import auth
     from app.application import application
+    from app.server import server
 
     #Register blueprints
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(application, url_prefix='/')
+    app.register_blueprint(server, url_prefix='/')
 
     from app.models.user import User
 
@@ -53,11 +55,11 @@ def redirect_to_home():
     return redirect(url_for('views.dashboard'))
 
 @app.errorhandler(404)
-def handle_not_found_error():
+def handle_not_found_error(err):
     """Redirects to 404.html if a HTTP 404 error is thrown"""
     return render_template('error/404.html', user=current_user), 404
 
 @app.errorhandler(500)
-def handle_internal_server_error():
+def handle_internal_server_error(err):
     """Redirects to 500.html if a 500 error is thrown"""
     return render_template('error/500.html', user=current_user), 500

@@ -13,13 +13,12 @@ from app.models.application import Application
 @application.route('/create', methods=['GET', 'POST'])
 def create():
     """Creates an application in the database using the information entered by the form"""
-
     form = ApplicationForm()
     if request.method == 'POST':
         retrieved_application = find_application_by_name(form.name.data)
 
         if retrieved_application:
-            flash('An application with this email address already exists within the system', category='error')
+            flash('An application with this name already exists within the system', category='error')
         elif form.validate_on_submit():
             try:
                 new_application = Application(name=form.name.data , team_email=form.team_email.data,team_name=form.team_name.data,
@@ -33,7 +32,7 @@ def create():
                 logging.error(err)
                 flash('Unable to create application', category='error')
             else:
-                logging.info('Application %s created successfully', form.name.data)
+                logging.info('Application %s added successfully', form.name.data)
                 flash('Application added successfully', category='success')
 
     return render_template('application/add-application.html', user=current_user, form=form)
@@ -115,6 +114,6 @@ def find_application_by_name(name):
         logging.error(err)
 
 @login_required
-@application.route('/fetch_all', methods=['GET'])
+@application.route('/fetch_all_applications', methods=['GET'])
 def fetch_all_applications():
     return jsonify(db.session.query(Application).all())
