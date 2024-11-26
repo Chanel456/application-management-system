@@ -1,5 +1,3 @@
-import datetime
-
 import pytest
 from werkzeug.security import generate_password_hash
 
@@ -30,21 +28,22 @@ class AuthActions(object):
     def __init__(self, client):
         self._client = client
 
-    def register(self, first_name, email, password, confirm_password, is_admin):
+    def register(self, first_name, email, password, confirm_password, account_type):
+        # is_admin = True if is_admin == 'admin' else False
         return self._client.post(
-            '/register',
-            data={'first_name': first_name, 'email': email, 'password': password, 'confirm_password': confirm_password, 'is_admin': is_admin }
+            '/auth/register',
+            data={'first_name': first_name, 'email': email, 'password': password, 'confirm_password': confirm_password, 'account_type': account_type }
         )
 
     def login(self, email, password):
         return self._client.post(
-           '/login',
+           '/auth/login',
             data={'email': email, 'password': password},
             follow_redirects = True
         )
 
     def logout(self):
-        return  self._client.get('/logout')
+        return  self._client.get('/auth/logout')
 
 @pytest.fixture
 def auth(client):
@@ -68,18 +67,21 @@ def init_user_table(app):
 @pytest.fixture
 def init_application_table(app):
     with app.app_context():
-        application1 = Application( name='Example App One', owner_id=1, team_name='Team One',
-                                   team_email='team.one@gmail.com', url='https://exampleappone.com',
-                                   swagger_link='https://exampleappone.com/swagger/ui', bitbucket_link=None,
-                                   status='Up', created=datetime.datetime(2024, 11, 14, 10, 36, 43, 846344))
-        application2 = Application( name='Example App Two', owner_id=1, team_name='Team Two',
-                                   team_email='team.two@gmail.com', url='https://exampleapptwo.com',
-                                   swagger_link='https://exampleapptwo.com/swagger/ui', bitbucket_link=None,
-                                   status='Down', created=datetime.datetime(2024, 11, 14, 10, 36, 43, 846344))
-        application3 = Application( name='Example App Three', owner_id=1, team_name='Team Three',
-                                   team_email='team.three@gmail.com', url='https://exampleappthree.com',
-                                   swagger_link='https://exampleappthree.com/swagger/ui', bitbucket_link=None,
-                                   status='Up', created=datetime.datetime(2024, 11, 14, 10, 36, 43, 846344))
+        application1 = Application(name='Example App One', team_name='Team One',
+                               team_email='team.one@gmail.com', url='https://exampleappone.com',
+                               swagger='https://exampleappone.com/swagger/ui',
+                               bitbucket='https://bitbucket.com/repos/exampleappone', extra_info=None,
+                               production_pods=1, server='ab0001')
+        application2 = Application(name='Example App Two', team_name='Team Two',
+                               team_email='team.two@gmail.com', url='https://exampleapptwo.com',
+                               swagger=None,
+                               bitbucket='https://bitbucket.com/repos/exampleapptwo', extra_info='This is an angular application',
+                               production_pods=1, server='ab0002')
+        application3 = Application(name='Example App Three', team_name='Team Three',
+                               team_email='team.three@gmail.com', url='https://exampleappthree.com',
+                               swagger='https://exampleappthree.com/swagger/ui',
+                               bitbucket='https://bitbucket.com/repos/exampleappthree', extra_info=None,
+                               production_pods=1, server='ab0003')
         db.session.add(application1)
         db.session.add(application2)
         db.session.add(application3)

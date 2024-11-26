@@ -6,7 +6,7 @@
     <div class="bg-light rounded">
         <div class="row">
             <h2>View Servers
-                <a class="button btn btn-success float-lg-end" href="{{url_for('server.create_server')}}">Add New Server</a>
+                <a class="button btn btn-success float-lg-end" href="{{url_for('server.create')}}">Add New Server</a>
             </h2>
         </div>
         <table id="serverTable" class="display table table-hover table-striped table-light no-wrap">
@@ -27,13 +27,13 @@
                 <td>{{item.cpu}}</td>
                 <td>{{item.memory}}</td>
                 <td>
-                    <a href="{{url_for('server.update_server', server_id = item.id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
+                    <a href="{{url_for('server.update', server_id = item.id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
                     {% if user.is_admin %}
-                    <a href="/delete/{{item.server_id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteserver{{item.server_id}}"><i class="bi bi-trash fs-4 text-danger mx-1"></i></a>
+                    <a href="/delete/{{item.server_id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteserver{{item.id}}"><i class="bi bi-trash fs-4 text-danger mx-1"></i></a>
                     {% endif %}
                 </td>
             </tr>
-        <div class="modal fade" id="modeldeleteserver{{item.server_id}}" tabindex="-1" aria-labelledby="modelDeleteServerLabel" aria-hidden="true">
+        <div class="modal fade" id="modeldeleteserver{{item.id}}" tabindex="-1" aria-labelledby="modelDeleteServerLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
@@ -45,8 +45,8 @@
                             <h3>Are you sure?</h3>
                             <p>Are you sure you want to delete the server {{item.name}}. This process cannot be undone</p>
                             <div>
-                                <a href="{{url_for('views.grid')}}" class="button btn btn-secondary">Cancel</a>
-                                <a href="{{url_for('server.delete_server', server_id = item.id)}}" class="button btn btn-danger">Delete</a>
+                                <a href="{{url_for('server.all_servers')}}" class="button btn btn-secondary">Cancel</a>
+                                <a href="{{url_for('server.delete', server_id = item.id)}}" class="button btn btn-danger">Delete</a>
                             </div>
                         </div>
                     </div>

@@ -10,26 +10,29 @@ function format ( d ) {
   return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td>Development team email:</td>'+
-            `<td><a href="mailto:${d[6]}">${d[6]}</a></td>` +
+            `<td><a href="mailto:${d[7]}">${d[7]}</a></td>` +
         '</tr>'+
         '<tr>'+
             '<td>Application Url:</td>'+
-            `<td><a href="${d[6]}">${d[7]}</a></td>` +
+            `<td><a href="${d[8]}">${d[8]}</a></td>` +
         '</tr>'+
+        ( d[9] !== 'None' ?
         '<tr>'+
             '<td>Swagger:</td>'+
-            `<td><a href="${d[7]}">${d[8]}</a></td>` +
-        '</tr>'+
-        '<tr>'+
+            `<td><a href="${d[9]}">${d[9]}</a></td>` +
+        '</tr>' : '')
+        + '<tr>'+
             '<td>Bitbucket:</td>'+
-            `<td><a href="${d[7]}">${d[9]}</a></td>` +
+            `<td><a href="${d[10]}">${d[10]}</a></td>` +
         '</tr>'+
+        ( d[11] !== 'None' ?
         '<tr>'+
             '<td>Extra Info:</td>'+
-            `<td>${d[10]}</td>` +
+            `<td>${d[11]}</td>` +
 
-        '</tr>'+
-    '</table>';
+        '</tr>' : '')
+
+    + '</table>';
 }
 
   var table = $('#applicationTable').DataTable({
@@ -42,11 +45,11 @@ function format ( d ) {
         defaultContent: ''
       },
       {
-            targets: 5,
+            targets: 6,
             className: 'dt-body-right'
       },
       {
-        targets: [6,7,8,9,10],
+        targets: [7,8,9,10,11],
         visible: false
       },
       {
@@ -54,8 +57,6 @@ function format ( d ) {
         defaultContent: '<div class="spinner-border spinner-border-sm" role="status"></div>',
         render: function (data, type, row, meta) {
             var currentCell = $("#applicationTable").DataTable().cells({"row":meta.row, "column":meta.col}).nodes(0);
-            console.log('Logging data')
-            console.log(data)
             $.ajax({
                 url: data,
             }).done(function (data, textStatus, xhr) {
@@ -70,7 +71,15 @@ function format ( d ) {
     ],
   layout: {
         topStart: {
-            buttons: ['excel']
+            buttons: [
+                {
+                  extend: 'excelHtml5',
+                  exportOptions: {
+                      columns: [1,2,3, 6, 7, 8, 9, 10]
+                  }
+                },
+            ]
+
         },
         topEnd: 'search',
         bottom: ['info', 'pageLength', 'paging']
@@ -103,7 +112,14 @@ var table2 = $('#serverTable').DataTable({
       ],
     layout: {
             topStart: {
-                buttons: ['excel']
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: [0,1,2,3]
+                        }
+                    }
+                ]
             },
             topEnd: 'search',
             bottom: ['info', 'pageLength', 'paging']

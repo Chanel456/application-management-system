@@ -10,9 +10,9 @@ from app.server import server
 from app.server.forms import ServerForm
 
 
-@server.route('/create-server', methods=['GET', 'POST'])
+@server.route('/create', methods=['GET', 'POST'])
 @login_required
-def create_server():
+def create():
     """Creates a server in the database using the information entered by the form"""
     form = ServerForm()
     if request.method == 'POST':
@@ -39,9 +39,9 @@ def create_server():
 
     return render_template('server/add-server.html', user=current_user, form=form)
 
-@server.route('/update-server', methods=['GET', 'POST'])
+@server.route('/update', methods=['GET', 'POST'])
 @login_required
-def update_server():
+def update():
     """Updates a servers details in the database. This endpoint takes a query parameter of the server id"""
 
     server_id = request.args.get('server_id')
@@ -63,16 +63,16 @@ def update_server():
             else:
                 logging.info('Server: %s successfully updated', updated_server['name'])
                 flash('Server successfully updated')
-                redirect(url_for('views.dashboard'))
+                redirect(url_for('server.all_servers'))
         else:
             flash('Server cannot be updated as they do not exist', category='error', )
 
     return render_template('server/update-server.html', user=current_user, form=form, server = retrieved_server)
 
 
-@server.route('/delete-server', methods=['GET'])
+@server.route('/delete', methods=['GET'])
 @login_required
-def delete_server():
+def delete():
     """This function deletes and server from the database. This action can only be completed my admin user.
         This function takes a query parameter of the server id"""
 
@@ -94,7 +94,7 @@ def delete_server():
         else:
             flash('Server cannot be deleted as it does not exist', category='error')
 
-    return redirect(url_for('views.grid'))
+    return redirect(url_for('server.all_servers'))
 
 def find_server_by_id(server_id):
     """Find a server in the database using the server id"""
@@ -115,6 +115,13 @@ def find_server_by_name(name):
         db.session.rollback()
         logging.error('Error occurred whilst querying the database')
         logging.error(err)
+
+@server.route('/all-servers')
+@login_required
+def all_servers():
+    servers = db.session.query(Server).all()
+    return render_template('server/grid.html', user=current_user, list=servers)
+
 
 @login_required
 @server.route('/fetch_all_servers', methods=['GET'])

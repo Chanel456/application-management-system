@@ -8,12 +8,17 @@ from app import db
 from app.application import application
 from app.application.forms import ApplicationForm
 from app.models.application import Application
+from app.models.server import Server
+
 
 @login_required
 @application.route('/create', methods=['GET', 'POST'])
 def create():
     """Creates an application in the database using the information entered by the form"""
     form = ApplicationForm()
+    form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
+    form.server.choices.insert(0, ('Please Select', 'Please Select'))
+
     if request.method == 'POST':
         retrieved_application = find_application_by_name(form.name.data)
 
@@ -23,7 +28,7 @@ def create():
             try:
                 new_application = Application(name=form.name.data , team_email=form.team_email.data,team_name=form.team_name.data,
                                               url=form.url.data, swagger=form.swagger.data, bitbucket=form.bitbucket.data,
-                                              production_pods=form.production_pods.data, extra_info= form.extra_info.data)
+                                              production_pods=form.production_pods.data, extra_info= form.extra_info.data, server=form.server.data)
                 db.session.add(new_application)
                 db.session.commit()
             except SQLAlchemyError as err:
@@ -45,13 +50,14 @@ def update():
     application_id = request.args.get('application_id')
     retrieved_application = find_application_by_id(application_id)
     form = ApplicationForm(obj = retrieved_application)
+    form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
 
     if request.method == 'POST' and form.validate_on_submit():
         updated_application = form.data
         updated_application.pop('csrf_token', None)
         if retrieved_application:
             try:
-                db.session.query(Application).filter_by(application_id=application_id).update(updated_application)
+                db.session.query(Application).filter_by(id=application_id).update(updated_application)
                 db.session.commit()
             except SQLAlchemyError as err:
                 db.session.rollback()
@@ -61,7 +67,7 @@ def update():
             else:
                 logging.info('Application: %s successfully updated', updated_application['name'])
                 flash('Application successfully updated')
-                redirect(url_for('views.dashboard'))
+                redirect(url_for('application.all_applications'))
         else:
             flash('Application cannot be updated as they do not exist', category='error',)
 
@@ -91,7 +97,7 @@ def delete():
         else:
             flash('Application cannot be deleted as it does not exist', category='error')
 
-    return redirect(url_for('views.dashboard'))
+    return redirect(url_for('application.all_applications'))
 
 def find_application_by_id(application_id):
     """Find an application in the database using the applications id"""
@@ -112,6 +118,12 @@ def find_application_by_name(name):
         db.session.rollback()
         logging.error('Error occurred whilst querying the database')
         logging.error(err)
+
+@application.route('/all-applications')
+@login_required
+def all_applications():
+    applications = db.session.query(Application).all()
+    return render_template('application/grid.html', user=current_user, list=applications)
 
 @login_required
 @application.route('/fetch_all_applications', methods=['GET'])

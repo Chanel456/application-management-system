@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import validators, StringField, EmailField, URLField, TextAreaField, IntegerField
-from wtforms.validators import DataRequired
+from wtforms import validators, StringField, EmailField, URLField, TextAreaField, IntegerField, SelectField
+from wtforms.validators import DataRequired, ValidationError
+
 
 class ApplicationForm(FlaskForm):
     """
@@ -22,6 +23,8 @@ class ApplicationForm(FlaskForm):
         Any extra information other should know about the application
     production_pods: number
         The number of pods this application has up in production
+    server: dropdown
+        The server the application is deployed on
     """
 
     name = StringField('Application Name', [DataRequired(), validators.Length(min=2, max=70), validators.Regexp('^[a-zA-Z- ]+$', message='Application name must only contain alphabetic characters and hyphens')])
@@ -32,3 +35,8 @@ class ApplicationForm(FlaskForm):
     bitbucket = URLField('Bitbucket link', [DataRequired()])
     extra_info = TextAreaField('Extra information', [validators.Length(max=250)])
     production_pods = IntegerField('Number of production pods', [DataRequired()])
+    server = SelectField('Server', [DataRequired()], coerce=str)
+
+    def validate_server(self, field):
+        if field.data == 'Please Select':
+            raise ValidationError('Please select a server')

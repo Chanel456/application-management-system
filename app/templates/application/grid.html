@@ -15,8 +15,9 @@
                 <th></th>
                 <th>Application Name</th>
                 <th>Development Team</th>
-                <th>Production Pods</th>
+                <th>Server</th>
                 <th>Status</th>
+                <th>Production Pods</th>
                 <th>Actions</th>
                 <th>Development team email</th>
                 <th>Application Url</th>
@@ -31,12 +32,13 @@
                 <td></td>
                 <td>{{item.name}}</td>
                 <td>{{item.team_name}}</td>
-                <td>{{item.production_pods}}</td>
+                <td>{{item.server}}</td>
                 <td>{{item.url}}</td>
+                <td>{{item.production_pods}}</td>
                 <td>
-                    <a href="{{url_for('application.update', application_id = item.application_id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
+                    <a href="{{url_for('application.update', application_id = item.id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
                     {% if user.is_admin %}
-                    <a href="/delete/{{item.application_id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteapplication{{item.application_id}}"><i class="bi bi-trash fs-4 text-danger mx-1"></i></a>
+                    <a href="/delete/{{item.id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteapplication{{item.id}}"><i class="bi bi-trash fs-4 text-danger mx-1"></i></a>
                     {% endif %}
                 </td>
                 <td>{{item.team_email}}</td>
@@ -45,7 +47,7 @@
                 <td>{{item.bitbucket}}</td>
                 <td>{{item.extra_info}}</td>
             </tr>
-        <div class="modal fade" id="modeldeleteapplication{{item.application_id}}" tabindex="-1" aria-labelledby="modelDeleteApplicationLabel" aria-hidden="true">
+        <div class="modal fade" id="modeldeleteapplication{{item.id}}" tabindex="-1" aria-labelledby="modelDeleteApplicationLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
@@ -57,8 +59,8 @@
                             <h3>Are you sure?</h3>
                             <p>Are you sure you want to delete the application {{item.name}}. This process cannot be undone</p>
                             <div>
-                                <a href="{{url_for('views.dashboard')}}" class="button btn btn-secondary">Cancel</a>
-                                <a href="{{url_for('application.delete', application_id = item.application_id)}}" class="button btn btn-danger">Delete</a>
+                                <a href="{{url_for('application.all_applications')}}" class="button btn btn-secondary">Cancel</a>
+                                <a href="{{url_for('application.delete', application_id = item.id)}}" class="button btn btn-danger">Delete</a>
                             </div>
                         </div>
                     </div>

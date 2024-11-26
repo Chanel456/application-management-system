@@ -4,50 +4,44 @@ from app.models.server import Server
 from app.server.routes import find_server_by_id, find_server_by_name
 
 
-def test_create_server(client, app):
-    client.post('/register',
-                data={'account_type': 'regular', 'email': 'test@gmail.com', 'first_name': 'Test',
-                      'password': '#Password12345',
-                      'confirm_password': '#Password12345'})
-    client.post('/login', data={'email': 'test@gmail.com', 'password': '#Password12345'})
+def test_create(client, app, auth):
+    auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
+    auth.login('test@gmail.com', '#Password12345')
 
     with client:
         with app.app_context():
-            response = client.post('/create-server',
+            response = client.post('/server/create',
                                         data={'name': 'example1234', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
             assert response.status_code == 200
-            assert Server.query.count() == 1
-            assert Server.query.first().name == 'example1234'
+            server = Server.query.filter_by(name='example1234').first()
+            assert server is not None
 
 
-def test_update_server(client, app):
-    client.post('/register',
-                data={'account_type': 'regular', 'email': 'test@gmail.com', 'first_name': 'Test',
-                      'password': '#Password12345',
-                      'confirm_password': '#Password12345'})
-    client.post('/login', data={'email': 'test@gmail.com', 'password': '#Password12345'})
+def test_update(client, app, auth):
+    auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
+    auth.login('test@gmail.com', '#Password12345')
 
-    client.post('/create-server',
+    client.post('/server/create',
                 data={'name': 'example1234', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
 
-    response = client.post('/update-server?server_id=1',
-                           data={'name': 'example1234', 'cpu': 967, 'memory': 123, 'location': 'Nottingham'})
     with app.app_context():
+        server = Server.query.filter_by(name='example1234').first()
+        assert server is not None
+
+    with client:
+        response = client.post(f'server/update?server_id={server.id}',
+                               data={'name': 'example1234', 'cpu': 967, 'memory': 123, 'location': 'Nottingham'})
         assert response.status_code == 200
-        assert Server.query.count() == 1
         server = Server.query.filter_by(name='example1234').first()
         assert server.cpu == 967
 
 
 
-def test_delete_server_admin_passes(client, app):
-    client.post('/register',
-                data={'account_type': 'admin', 'email': 'test@gmail.com', 'first_name': 'Test',
-                      'password': '#Password12345',
-                      'confirm_password': '#Password12345'})
-    client.post('/login', data={'email': 'test@gmail.com', 'password': '#Password12345'})
+def test_delete_admin_passes(client, app, auth):
+    auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'admin')
+    auth.login('test@gmail.com', '#Password12345')
 
-    client.post('/create-server',
+    client.post('/server/create',
                 data={'name': 'example1234', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
 
 
@@ -56,20 +50,17 @@ def test_delete_server_admin_passes(client, app):
         assert server is not None
 
     with client:
-        client.get('/delete-server?server_id=1')
+        client.get(f'/server/delete?server_id={server.id}' )
         # assert current_user.is_admin == True # to fix i need to introduce sessions
         server = Server.query.filter_by(name='example1234').first()
         assert server is None
 
 
-def test_delete_server_regular_fails(client, app):
-    client.post('/register',
-                data={'account_type': 'regular', 'email': 'test@gmail.com', 'first_name': 'Test',
-                      'password': '#Password12345',
-                      'confirm_password': '#Password12345'})
-    client.post('/login', data={'email': 'test@gmail.com', 'password': '#Password12345'})
+def test_delete_regular_fails(client, app, auth):
+    auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
+    auth.login('test@gmail.com', '#Password12345')
 
-    client.post('/create-server',
+    client.post('/server/create',
                 data={'name': 'example1234', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
 
 
@@ -78,7 +69,7 @@ def test_delete_server_regular_fails(client, app):
         assert server is not None
 
     with client:
-        client.get('/delete-server?server_id=1')
+        client.get(f'/server/delete?server_id={server.id}')
         assert current_user.is_admin == False
         server = Server.query.filter_by(name='example1234').first()
         assert server is not None

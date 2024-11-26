@@ -36,8 +36,14 @@
           <a class="nav-link" href="{{ url_for('views.dashboard') }}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modallogout">Logout</a>
+          <a class="nav-link" href="{{ url_for('application.all_applications') }}">Applications</a>
         </li>
+          <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('server.all_servers') }}">Servers</a>
+        </li>
+          <li class="nav-item">
+          <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modallogout">Logout</a>
+        </li>`1
           {% else %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
