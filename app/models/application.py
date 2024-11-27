@@ -36,7 +36,7 @@ class Application(db.Model):
     name: str = db.Column(db.String(150), unique = True)
     team_name: str = db.Column(db.String(150))
     team_email: str = db.Column(db.String(150))
-    url: str = db.Column(db.String(150))
+    url: str = db.Column(db.String(150), unique=True)
     swagger: str = db.Column(db.String(150), nullable=True)
     bitbucket: str = db.Column(db.String(200), unique = True)
     extra_info: str = db.Column(db.Text(200), nullable = True)

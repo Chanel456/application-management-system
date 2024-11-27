@@ -1,3 +1,5 @@
+import validators as valid_package
+
 from flask_wtf import FlaskForm
 from wtforms import validators, StringField, EmailField, URLField, TextAreaField, IntegerField, SelectField
 from wtforms.validators import DataRequired, ValidationError
@@ -37,6 +39,22 @@ class ApplicationForm(FlaskForm):
     production_pods = IntegerField('Number of production pods', [DataRequired()])
     server = SelectField('Server', [DataRequired()], coerce=str)
 
+    def validate_team_email(self, field):
+        if not valid_package.email(field.data):
+            raise ValidationError('Please enter a valid email')
+
     def validate_server(self, field):
         if field.data == 'Please Select':
             raise ValidationError('Please select a server')
+
+    def validate_bitbucket(self, field):
+        if 'https://bitbucket.com' not in field.data or not valid_package.url(field.data):
+            raise ValidationError('Please enter a valid bitbucket url. Url should start with https://bitbucket.com')
+
+    def validate_swagger(self, field):
+        if not valid_package.url(field.data):
+            raise ValidationError('Please enter a valid url')
+
+    def validate_url(self, field):
+        if not valid_package.url(field.data):
+            raise ValidationError('Please enter a valid url')

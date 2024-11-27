@@ -20,10 +20,12 @@ def create():
     form.server.choices.insert(0, ('Please Select', 'Please Select'))
 
     if request.method == 'POST':
-        retrieved_application = find_application_by_name(form.name.data)
+        retrieved_application_by_name = find_application_by_name(form.name.data)
+        retrieved_application_by_url = find_application_by_url(form.url.data)
+        retrieved_application_by_bitbucket = find_application_by_bitbucket(form.bitbucket.data)
 
-        if retrieved_application:
-            flash('An application with this name already exists within the system', category='error')
+        if retrieved_application_by_name or retrieved_application_by_url or retrieved_application_by_bitbucket:
+            flash('An application with this name, url or bitbucket already exists within the system', category='error')
         elif form.validate_on_submit():
             try:
                 new_application = Application(name=form.name.data , team_email=form.team_email.data,team_name=form.team_name.data,
@@ -52,24 +54,31 @@ def update():
     form = ApplicationForm(obj = retrieved_application)
     form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
 
-    if request.method == 'POST' and form.validate_on_submit():
-        updated_application = form.data
-        updated_application.pop('csrf_token', None)
-        if retrieved_application:
-            try:
-                db.session.query(Application).filter_by(id=application_id).update(updated_application)
-                db.session.commit()
-            except SQLAlchemyError as err:
-                db.session.rollback()
-                logging.error('Unable to update application: %s', updated_application['name'])
-                logging.error(err)
-                flash('Unable to update application', category='error')
+    if request.method == 'POST':
+        logging.info(form.data)
+        retrieved_application_by_url = find_application_by_url(form.url.data)
+        retrieved_application_by_bitbucket = find_application_by_bitbucket(form.bitbucket.data)
+
+        if (retrieved_application_by_bitbucket and retrieved_application_by_bitbucket.id != retrieved_application.id) or (retrieved_application_by_url and retrieved_application_by_url.id != retrieved_application.id):
+            flash('There is an application with the same bitbucket or url already in the system', category='error')
+        elif form.validate_on_submit():
+            updated_application = form.data
+            updated_application.pop('csrf_token', None)
+            if retrieved_application:
+                try:
+                    db.session.query(Application).filter_by(id=application_id).update(updated_application)
+                    db.session.commit()
+                except SQLAlchemyError as err:
+                    db.session.rollback()
+                    logging.error('Unable to update application: %s', updated_application['name'])
+                    logging.error(err)
+                    flash('Unable to update application', category='error')
+                else:
+                    logging.info('Application: %s successfully updated', updated_application['name'])
+                    flash('Application successfully updated')
+                    redirect(url_for('application.all_applications'))
             else:
-                logging.info('Application: %s successfully updated', updated_application['name'])
-                flash('Application successfully updated')
-                redirect(url_for('application.all_applications'))
-        else:
-            flash('Application cannot be updated as they do not exist', category='error',)
+                flash('Application cannot be updated as they do not exist', category='error',)
 
     return render_template('application/update-application.html', user = current_user, application = retrieved_application, form = form)
 
@@ -119,13 +128,28 @@ def find_application_by_name(name):
         logging.error('Error occurred whilst querying the database')
         logging.error(err)
 
+def find_application_by_url(url):
+    """Finds an application in the database by the application url"""
+    try:
+        retrieved_application = Application.query.filter_by(url=url).first()
+        return retrieved_application
+    except SQLAlchemyError as err:
+        db.session.rollback()
+        logging.error('Error occurred whilst querying the database')
+        logging.error(err)
+
+def find_application_by_bitbucket(bitbucket):
+    """Finds an application in the database by the application bitbucket url"""
+    try:
+        retrieved_application = Application.query.filter_by(bitbucket=bitbucket).first()
+        return retrieved_application
+    except SQLAlchemyError as err:
+        db.session.rollback()
+        logging.error('Error occurred whilst querying the database')
+        logging.error(err)
+
 @application.route('/all-applications')
 @login_required
 def all_applications():
     applications = db.session.query(Application).all()
     return render_template('application/grid.html', user=current_user, list=applications)
-
-@login_required
-@application.route('/fetch_all_applications', methods=['GET'])
-def fetch_all_applications():
-    return jsonify(db.session.query(Application).all())

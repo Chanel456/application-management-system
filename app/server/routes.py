@@ -121,9 +121,3 @@ def find_server_by_name(name):
 def all_servers():
     servers = db.session.query(Server).all()
     return render_template('server/grid.html', user=current_user, list=servers)
-
-
-@login_required
-@server.route('/fetch_all_servers', methods=['GET'])
-def fetch_all_servers():
-    return jsonify(db.session.query(Server).all())

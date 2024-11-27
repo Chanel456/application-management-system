@@ -39,6 +39,7 @@ def register():
     """Registers a user and allows them to access the web application"""
     form = RegistrationForm()
     if request.method == 'POST':
+        logging.info(form.data)
         user = find_user_by_email(form.email.data)
         if user:
             flash('This user already exists. Please login', category='error')

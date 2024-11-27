@@ -17,7 +17,7 @@ def test_login(client, auth):
     assert response.status_code == 200
 
     with client:
-        client.get('/dashboard')
+        client.get('/views/dashboard')
         assert session['_user_id'] == '1'
         assert current_user.email == 'test@gmail.com'
 
@@ -26,7 +26,7 @@ def test_logout(auth):
     auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
     auth.login('test@gmail.com', '#Password12345')
     response = auth.logout()
-    assert response.headers['Location'] == '/login'
+    assert response.headers['Location'] == '/auth/login'
 
 def test_find_user_by_email_found(init_user_table):
     user = find_user_by_email('test.user1@gmail.com')
