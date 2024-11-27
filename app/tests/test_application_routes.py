@@ -1,6 +1,8 @@
 from flask_login import current_user
 
-from app.application.routes import find_application_by_id, find_application_by_name
+from app.application import application
+from app.application.routes import find_application_by_id, find_application_by_name, find_application_by_url, \
+    find_application_by_bitbucket
 from app.models.application import Application
 
 def test_create(client, app, auth, init_server_table):
@@ -107,4 +109,24 @@ def test_find_app_by_id_found(init_application_table):
 
 def test_find_app_by_id_not_found(init_application_table):
     application = find_application_by_id('23456789')
+    assert application is None
+
+def test_find_app_by_url_found(init_application_table):
+    application = find_application_by_url('https://exampleappone.com')
+    assert application is not None
+    assert application.name == 'Example App One'
+    assert application.production_pods == 1
+
+def test_find_app_by_url_not_found(init_application_table):
+    application = find_application_by_url('https://urlnotfound.com')
+    assert application is None
+
+def test_find_app_by_bitbucket_found(init_application_table):
+    application = find_application_by_bitbucket('https://bitbucket.com/repos/exampleapptwo')
+    assert application is not None
+    assert application.name == 'Example App Two'
+    assert application.production_pods == 1
+
+def test_find_app_by_bitbucket_not_found(init_application_table):
+    application = find_application_by_bitbucket('https:/bitbucketnotfound.com')
     assert application is None

@@ -58,9 +58,12 @@ def update():
         logging.info(form.data)
         retrieved_application_by_url = find_application_by_url(form.url.data)
         retrieved_application_by_bitbucket = find_application_by_bitbucket(form.bitbucket.data)
+        retrieved_application_by_name = find_application_by_name(form.name.data)
 
-        if (retrieved_application_by_bitbucket and retrieved_application_by_bitbucket.id != retrieved_application.id) or (retrieved_application_by_url and retrieved_application_by_url.id != retrieved_application.id):
-            flash('There is an application with the same bitbucket or url already in the system', category='error')
+        if (((retrieved_application_by_bitbucket and retrieved_application_by_bitbucket.id != retrieved_application.id)
+             or (retrieved_application_by_url and retrieved_application_by_url.id != retrieved_application.id))
+                or (retrieved_application_by_name and retrieved_application_by_name.id != retrieved_application.id)):
+            flash('There is an application with the same name, bitbucket or url already in the system', category='error')
         elif form.validate_on_submit():
             updated_application = form.data
             updated_application.pop('csrf_token', None)
@@ -151,5 +154,6 @@ def find_application_by_bitbucket(bitbucket):
 @application.route('/all-applications')
 @login_required
 def all_applications():
+    """Renders the html for the grid to view all applications"""
     applications = db.session.query(Application).all()
     return render_template('application/grid.html', user=current_user, list=applications)

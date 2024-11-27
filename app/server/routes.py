@@ -1,6 +1,6 @@
 import logging
 
-from flask import jsonify, render_template, flash, request, url_for, redirect
+from flask import render_template, flash, request, url_for, redirect
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -48,7 +48,11 @@ def update():
     retrieved_server = find_server_by_id(server_id)
     form = ServerForm(obj=retrieved_server)
 
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'POST':
+        retrieved_server_by_name = find_server_by_name(form.name.data)
+        if retrieved_server_by_name and retrieved_server_by_name.id != retrieved_server.id:
+            flash('There is an server with the same name already in the system', category='error')
+    elif form.validate_on_submit():
         updated_server = form.data
         updated_server.pop('csrf_token', None)
         if retrieved_server:
@@ -119,5 +123,6 @@ def find_server_by_name(name):
 @server.route('/all-servers')
 @login_required
 def all_servers():
+    """Renders the html for the grid to view all servers"""
     servers = db.session.query(Server).all()
     return render_template('server/grid.html', user=current_user, list=servers)
