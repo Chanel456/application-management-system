@@ -25,7 +25,7 @@ function format ( d ) {
             '<td>Bitbucket:</td>'+
             `<td><a href="${d[10]}">${d[10]}</a></td>` +
         '</tr>'+
-        ( d[11] !== 'None' ?
+        ( d[11] !== 'None' || d[11] ?
         '<tr>'+
             '<td>Extra Info:</td>'+
             `<td>${d[11]}</td>` +
