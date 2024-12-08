@@ -16,7 +16,6 @@
                 <th>Application Name</th>
                 <th>Development Team</th>
                 <th>Server</th>
-                <th>Status</th>
                 <th>Production Pods</th>
                 <th>Actions</th>
                 <th>Development team email</th>
@@ -33,7 +32,6 @@
                 <td>{{item.name}}</td>
                 <td>{{item.team_name}}</td>
                 <td>{{item.server}}</td>
-                <td>{{item.url}}</td>
                 <td>{{item.production_pods}}</td>
                 <td>
                     <a href="{{url_for('application.update', application_id = item.id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>

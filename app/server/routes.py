@@ -125,9 +125,19 @@ def find_server_by_name(name):
         logging.error('Error occurred whilst querying the database')
         logging.error(err)
 
+def fetch_all_servers():
+    """Fetches all servers in the server table"""
+    try:
+        applications = db.session.query(Server).all()
+        return applications
+    except SQLAlchemyError as err:
+        db.session.rollback()
+        logging.error('Error occurred whilst querying the database')
+        logging.error(err)
+
 @server.route('/all-servers')
 @login_required
 def all_servers():
     """Renders the html for the grid to view all servers"""
-    servers = db.session.query(Server).all()
+    servers = fetch_all_servers()
     return render_template('server/grid.html', user=current_user, list=servers)

@@ -9,7 +9,7 @@ def test_password_validator_passes(init_user_table, app):
         with app.test_request_context():
             form = LoginForm(data={'email': 'test.user1@gmail.com', 'password': '#Password12345'})
             form.validate_password(form.password)
-            assert form.password.errors.__len__() == 0
+            assert len(form.password.errors) == 0
 
 def test_password_validator_fails(init_user_table, app):
     with app.app_context():
@@ -24,7 +24,7 @@ def test_email_validator_passes(app):
             form = RegistrationForm()
             form.email.data = 'test.user1@gmail.com'
             form.validate_email(form.email)
-            assert form.email.errors.__len__() == 0
+            assert len(form.email.errors) == 0
 
 def test_email_validator_fails(app):
     with app.app_context():

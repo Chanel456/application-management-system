@@ -7,30 +7,28 @@ DataTable.defaults.layout = {
 
 function format ( d ) {
 //This function return the data to be presented in the child row of the grid for a parent row
-    const extra_info = d[11] == '' || d[11]  == 'None' ? false : true
   return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td>Development team email:</td>'+
-            `<td><a href="mailto:${d[7]}">${d[7]}</a></td>` +
+            `<td><a href="mailto:${d[6]}">${d[6]}</a></td>` +
         '</tr>'+
         '<tr>'+
             '<td>Application Url:</td>'+
-            `<td><a href="${d[8]}">${d[8]}</a></td>` +
+            `<td><a href="${d[7]}" target="_blank">${d[7]}</a></td>` +
         '</tr>'+
-        ( d[9] !== 'None' ?
+        ( d[8] !== '' ?
         '<tr>'+
             '<td>Swagger:</td>'+
-            `<td><a href="${d[9]}">${d[9]}</a></td>` +
+            `<td><a href="${d[8]}" target="_blank">${d[8]}</a></td>` +
         '</tr>' : '')
         + '<tr>'+
             '<td>Bitbucket:</td>'+
-            `<td><a href="${d[10]}">${d[10]}</a></td>` +
+            `<td><a href="${d[9]}" target="_blank">${d[9]}</a></td>` +
         '</tr>'+
-        ( extra_info ?
+        ( d[10] !== '' ?
         '<tr>'+
             '<td>Extra Info:</td>'+
-            `<td>${d[11]}</td>` +
-
+            `<td>${d[10]}</td>` +
         '</tr>' : '')
 
     + '</table>';
@@ -46,29 +44,13 @@ function format ( d ) {
         defaultContent: ''
       },
       {
-            targets: 6,
+            targets: 5,
             className: 'dt-body-right'
       },
       {
-        targets: [7,8,9,10,11],
+        targets: [6,7,8,9,10],
         visible: false
       },
-      {
-        targets: 4,
-        defaultContent: '<div class="spinner-border spinner-border-sm" role="status"></div>',
-        render: function (data, type, row, meta) {
-            var currentCell = $("#applicationTable").DataTable().cells({"row":meta.row, "column":meta.col}).nodes(0);
-            $.ajax({
-                url: data,
-            }).done(function (data, textStatus, xhr) {
-                xhr.status == 200 ? $(currentCell).html('<i class="bi bi-circle-fill text-success"></i>') : $(currentCell).html('<i class="bi bi-circle-fill text-danger"></i>')
-            }).fail(function () {
-                $(currentCell).html('<i class="bi bi-circle-fill text-danger"></i>')
-            })
-            return null
-
-            }
-        }
     ],
   layout: {
         topStart: {
@@ -76,7 +58,7 @@ function format ( d ) {
                 {
                   extend: 'excelHtml5',
                   exportOptions: {
-                      columns: [1,2,3, 6, 7, 8, 9, 10]
+                      columns: [1,2,3,4, 6, 7, 8, 9, 10]
                   }
                 },
             ]

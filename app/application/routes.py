@@ -152,14 +152,29 @@ def find_application_by_bitbucket(bitbucket):
 def find_applications_deployed_on_server(server_name):
     """Fetches applications deployed on a server by searching for rows which has a
     server column equal to the parsed in server name"""
-    returned_applications = Application.query.with_entities(Application.name).filter_by(server=server_name).all()
-    results = [r for (r, ) in returned_applications]
-    applications = ', '.join(name for name in results)
-    return applications
+    try:
+        returned_applications = Application.query.with_entities(Application.name).filter_by(server=server_name).all()
+        results = [r for (r, ) in returned_applications]
+        applications = ', '.join(name for name in results)
+        return applications
+    except SQLAlchemyError as err:
+        db.session.rollback()
+        logging.error('Error occurred whilst querying the database')
+        logging.error(err)
+
+def fetch_all_applications():
+    """Fetches all applications in the application table"""
+    try:
+        applications = db.session.query(Application).all()
+        return applications
+    except SQLAlchemyError as err:
+        db.session.rollback()
+        logging.error('Error occurred whilst querying the database')
+        logging.error(err)
 
 @application.route('/all-applications')
 @login_required
 def all_applications():
     """Renders the html for the grid to view all applications"""
-    applications = db.session.query(Application).all()
+    applications = fetch_all_applications()
     return render_template('application/grid.html', user=current_user, list=applications)
