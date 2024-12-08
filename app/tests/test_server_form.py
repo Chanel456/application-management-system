@@ -1,6 +1,6 @@
 from app.server.forms import ServerForm
 
-def test_form__passes(app):
+def test_form_passes(app):
     with app.app_context():
         with app.test_request_context():
             form = ServerForm(data = {'name': 'example1234', 'cpu': 4567, 'memory': 23456, 'location': 'Watford'})

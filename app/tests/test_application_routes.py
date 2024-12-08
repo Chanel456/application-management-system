@@ -1,8 +1,7 @@
 from flask_login import current_user
 
-from app.application import application
 from app.application.routes import find_application_by_id, find_application_by_name, find_application_by_url, \
-    find_application_by_bitbucket
+    find_application_by_bitbucket, find_applications_deployed_on_server
 from app.models.application import Application
 
 def test_create(client, app, auth, init_server_table):
@@ -13,8 +12,8 @@ def test_create(client, app, auth, init_server_table):
         with app.app_context():
             response = client.post('/application/create',
                                    data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
-                                         'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger',
-                                         'bitbucket': 'https://bitbucket.com/repo/exampleappone', 'extra_info': '',
+                                         'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
+                                         'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
                                          'production_pods': 3, 'server': 'exampleserver1'})
             assert response.status_code == 200
             application = Application.query.filter_by(name='Example App').first()
@@ -27,8 +26,8 @@ def test_update(client, app, auth, init_server_table):
 
     client.post('/application/create',
                     data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
-                          'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger',
-                          'bitbucket': 'https://bitbucket.com/repo/exampleappone', 'extra_info': '',
+                          'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
+                          'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
                           'production_pods': 3, 'server': 'exampleserver1'})
 
     with app.app_context():
@@ -39,8 +38,8 @@ def test_update(client, app, auth, init_server_table):
     with client:
         response = client.post(f'/application/update?application_id={application.id}',
                             data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'newteamemail@gmail.com',
-                                  'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger',
-                                  'bitbucket': 'https://bitbucket.com/repo/exampleappone', 'extra_info': '',
+                                  'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
+                                  'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
                                   'production_pods': 3, 'server': 'exampleserver1'})
         assert response.status_code == 200
         application = Application.query.filter_by(id=application.id).first()
@@ -54,8 +53,8 @@ def test_delete_admin_passes(client, app, auth, init_server_table):
 
     client.post('/application/create',
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
-                          'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger',
-                          'bitbucket': 'https://bitbucket.com/repo/exampleappone', 'extra_info': '',
+                          'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
+                          'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
                           'production_pods': 3, 'server': 'exampleserver1'})
 
 
@@ -65,7 +64,6 @@ def test_delete_admin_passes(client, app, auth, init_server_table):
 
     with client:
         client.get(f'/application/delete?application_id={application.id}')
-        # assert current_user.is_admin == True # to fix i need to introduce sessions
         application = Application.query.filter_by(name='Example App').first()
         assert application is None
 
@@ -76,8 +74,8 @@ def test_delete_regular_fails(client, app, auth, init_server_table):
 
     client.post('/application/create',
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
-                          'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger',
-                          'bitbucket': 'https://bitbucket.com/repo/exampleappone', 'extra_info': '',
+                          'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
+                          'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
                           'production_pods': 3, 'server': 'exampleserver1'})
 
 
@@ -92,29 +90,29 @@ def test_delete_regular_fails(client, app, auth, init_server_table):
         assert application is not None
 
 def test_find_app_by_name_found(init_application_table):
-    application = find_application_by_name('Example App One')
+    application = find_application_by_name('App One')
     assert application is not None
-    assert application.name == 'Example App One'
-    assert application.url == 'https://exampleappone.com'
+    assert application.name == 'App One'
+    assert application.url == 'https://appone.com'
 
 def test_find_app_by_name_not_found(init_application_table):
     application = find_application_by_name('Example App Not Found')
     assert application is None
 
 def test_find_app_by_id_found(init_application_table):
-    application = find_application_by_id('3')
+    application = find_application_by_id('13')
     assert application is not None
-    assert application.name == 'Example App Three'
-    assert application.url == 'https://exampleappthree.com'
+    assert application.name == 'App Three'
+    assert application.url == 'https://appthree.com'
 
 def test_find_app_by_id_not_found(init_application_table):
     application = find_application_by_id('23456789')
     assert application is None
 
 def test_find_app_by_url_found(init_application_table):
-    application = find_application_by_url('https://exampleappone.com')
+    application = find_application_by_url('https://appone.com')
     assert application is not None
-    assert application.name == 'Example App One'
+    assert application.name == 'App One'
     assert application.production_pods == 1
 
 def test_find_app_by_url_not_found(init_application_table):
@@ -122,11 +120,20 @@ def test_find_app_by_url_not_found(init_application_table):
     assert application is None
 
 def test_find_app_by_bitbucket_found(init_application_table):
-    application = find_application_by_bitbucket('https://bitbucket.com/repos/exampleapptwo')
+    application = find_application_by_bitbucket('https://bitbucket.com/repos/apptwo')
     assert application is not None
-    assert application.name == 'Example App Two'
+    assert application.name == 'App Two'
     assert application.production_pods == 1
 
 def test_find_app_by_bitbucket_not_found(init_application_table):
     application = find_application_by_bitbucket('https:/bitbucketnotfound.com')
     assert application is None
+
+def test_find_applications_deployed_on_server_found(init_application_table):
+    applications = find_applications_deployed_on_server('ab0001')
+    assert applications is not None
+    assert len(applications) >= 1
+
+def test_find_applications_deployed_on_server_not_found(init_application_table):
+    applications = find_applications_deployed_on_server('invalid server')
+    assert len(applications) == 0

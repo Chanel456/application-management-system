@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
 from app import db
+from app.application.routes import find_applications_deployed_on_server
 from app.models.server import Server
 from app.server import server
 from app.server.forms import ServerForm
@@ -51,25 +52,25 @@ def update():
     if request.method == 'POST':
         retrieved_server_by_name = find_server_by_name(form.name.data)
         if retrieved_server_by_name and retrieved_server_by_name.id != retrieved_server.id:
-            flash('There is an server with the same name already in the system', category='error')
-    elif form.validate_on_submit():
-        updated_server = form.data
-        updated_server.pop('csrf_token', None)
-        if retrieved_server:
-            try:
-                db.session.query(Server).filter_by(id=server_id).update(updated_server)
-                db.session.commit()
-            except SQLAlchemyError as err:
-                db.session.rollback()
-                logging.error('Unable to update server: %s', updated_server['name'])
-                logging.error(err)
-                flash('Unable to update server', category='error')
+            flash('There is a server with the same name already in the system', category='error')
+        elif form.validate_on_submit():
+            updated_server = form.data
+            updated_server.pop('csrf_token', None)
+            if retrieved_server:
+                try:
+                    db.session.query(Server).filter_by(id=server_id).update(updated_server)
+                    db.session.commit()
+                except SQLAlchemyError as err:
+                    db.session.rollback()
+                    logging.error('Unable to update server: %s', updated_server['name'])
+                    logging.error(err)
+                    flash('Unable to update server', category='error')
+                else:
+                    logging.info('Server: %s successfully updated', updated_server['name'])
+                    flash('Server successfully updated', category='success')
+                    redirect(url_for('server.all_servers'))
             else:
-                logging.info('Server: %s successfully updated', updated_server['name'])
-                flash('Server successfully updated')
-                redirect(url_for('server.all_servers'))
-        else:
-            flash('Server cannot be updated as they do not exist', category='error', )
+                flash('Server cannot be updated as they do not exist', category='error', )
 
     return render_template('server/update-server.html', user=current_user, form=form, server = retrieved_server)
 
@@ -83,7 +84,11 @@ def delete():
     if request.method == 'GET' and current_user.is_admin:
         server_id = request.args.get('server_id')
         retrieved_server = find_server_by_id(server_id)
-        if retrieved_server:
+        applications_deployed_on_server = find_applications_deployed_on_server(retrieved_server.name)
+        if applications_deployed_on_server:
+            message = f'Server cannot be deleted as it is being application(s) {applications_deployed_on_server} are running on it'
+            flash(message, category='error')
+        elif retrieved_server:
             try:
                 db.session.delete(retrieved_server)
                 db.session.commit()

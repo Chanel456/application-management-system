@@ -14,7 +14,7 @@ class Server (db.Model):
     location: str = db.Column(db.String(150))
     created: datetime.datetime= db.Column(db.DateTime, default=datetime.datetime.now())
 
-# @event.listens_for(Server.__table__, 'after_create')
+@event.listens_for(Server.__table__, 'after_create')
 def create_servers(*args, **kwargs):
     db.session.add(Server(name='ab0001', cpu=123, memory=123, location='Walthamstow'))
     db.session.add(Server(name='ab0002', cpu=234, memory=234, location='Harrow'))

@@ -7,6 +7,7 @@ DataTable.defaults.layout = {
 
 function format ( d ) {
 //This function return the data to be presented in the child row of the grid for a parent row
+    const extra_info = d[11] == '' || d[11]  == 'None' ? false : true
   return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td>Development team email:</td>'+
@@ -25,7 +26,7 @@ function format ( d ) {
             '<td>Bitbucket:</td>'+
             `<td><a href="${d[10]}">${d[10]}</a></td>` +
         '</tr>'+
-        ( d[11] !== 'None' || d[11] ?
+        ( extra_info ?
         '<tr>'+
             '<td>Extra Info:</td>'+
             `<td>${d[11]}</td>` +

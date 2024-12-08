@@ -39,9 +39,6 @@ def create_app(config_class=Config):
     with app.app_context():
         if not path.exists('app/' + DB_NAME):
             db.create_all()
-            if app.config['TESTING'] == False:
-                create_applications()
-                create_servers()
             logging.info('Database created')
 
     # Initialise login manager

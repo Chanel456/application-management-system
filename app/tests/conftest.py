@@ -67,20 +67,20 @@ def init_user_table(app):
 @pytest.fixture
 def init_application_table(app):
     with app.app_context():
-        application1 = Application(name='Example App One', team_name='Team One',
-                               team_email='team.one@gmail.com', url='https://exampleappone.com',
-                               swagger='https://exampleappone.com/swagger/ui',
-                               bitbucket='https://bitbucket.com/repos/exampleappone', extra_info=None,
+        application1 = Application(name='App One', team_name='Team One',
+                               team_email='team.one@gmail.com', url='https://appone.com',
+                               swagger='https://appone.com/swagger/ui',
+                               bitbucket='https://bitbucket.com/repos/appone', extra_info=None,
                                production_pods=1, server='ab0001')
-        application2 = Application(name='Example App Two', team_name='Team Two',
-                               team_email='team.two@gmail.com', url='https://exampleapptwo.com',
+        application2 = Application(name='App Two', team_name='Team Two',
+                               team_email='team.two@gmail.com', url='https://apptwo.com',
                                swagger=None,
-                               bitbucket='https://bitbucket.com/repos/exampleapptwo', extra_info='This is an angular application',
+                               bitbucket='https://bitbucket.com/repos/apptwo', extra_info='This is an angular application',
                                production_pods=1, server='ab0002')
-        application3 = Application(name='Example App Three', team_name='Team Three',
-                               team_email='team.three@gmail.com', url='https://exampleappthree.com',
-                               swagger='https://exampleappthree.com/swagger/ui',
-                               bitbucket='https://bitbucket.com/repos/exampleappthree', extra_info=None,
+        application3 = Application(name='App Three', team_name='Team Three',
+                               team_email='team.three@gmail.com', url='https://appthree.com',
+                               swagger='https://appthree.com/swagger/ui',
+                               bitbucket='https://bitbucket.com/appthree', extra_info=None,
                                production_pods=1, server='ab0003')
         db.session.add(application1)
         db.session.add(application2)

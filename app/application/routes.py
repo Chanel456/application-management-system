@@ -55,11 +55,9 @@ def update():
     form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
 
     if request.method == 'POST':
-        logging.info(form.data)
         retrieved_application_by_url = find_application_by_url(form.url.data)
         retrieved_application_by_bitbucket = find_application_by_bitbucket(form.bitbucket.data)
         retrieved_application_by_name = find_application_by_name(form.name.data)
-
         if (((retrieved_application_by_bitbucket and retrieved_application_by_bitbucket.id != retrieved_application.id)
              or (retrieved_application_by_url and retrieved_application_by_url.id != retrieved_application.id))
                 or (retrieved_application_by_name and retrieved_application_by_name.id != retrieved_application.id)):
@@ -78,7 +76,7 @@ def update():
                     flash('Unable to update application', category='error')
                 else:
                     logging.info('Application: %s successfully updated', updated_application['name'])
-                    flash('Application successfully updated')
+                    flash('Application successfully updated', category='success')
                     redirect(url_for('application.all_applications'))
             else:
                 flash('Application cannot be updated as they do not exist', category='error',)
@@ -150,6 +148,14 @@ def find_application_by_bitbucket(bitbucket):
         db.session.rollback()
         logging.error('Error occurred whilst querying the database')
         logging.error(err)
+
+def find_applications_deployed_on_server(server_name):
+    """Fetches applications deployed on a server by searching for rows which has a
+    server column equal to the parsed in server name"""
+    returned_applications = Application.query.with_entities(Application.name).filter_by(server=server_name).all()
+    results = [r for (r, ) in returned_applications]
+    applications = ', '.join(name for name in results)
+    return applications
 
 @application.route('/all-applications')
 @login_required

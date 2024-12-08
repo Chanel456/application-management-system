@@ -3,7 +3,6 @@ from flask_login import current_user
 from app.models.server import Server
 from app.server.routes import find_server_by_id, find_server_by_name
 
-
 def test_create(client, app, auth):
     auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
     auth.login('test@gmail.com', '#Password12345')
@@ -51,7 +50,6 @@ def test_delete_admin_passes(client, app, auth):
 
     with client:
         client.get(f'/server/delete?server_id={server.id}' )
-        # assert current_user.is_admin == True # to fix i need to introduce sessions
         server = Server.query.filter_by(name='example1234').first()
         assert server is None
 
@@ -85,7 +83,7 @@ def test_find_server_by_name_not_found(init_server_table):
     assert server is None
 
 def test_find_server_by_id_found(init_server_table):
-    server = find_server_by_id('3')
+    server = find_server_by_id('13')
     assert server is not None
     assert server.name == 'exampleserver3'
     assert server.cpu == 789
