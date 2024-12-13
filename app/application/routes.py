@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template, request, flash, redirect, url_for, jsonify
+from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -8,15 +8,18 @@ from app import db
 from app.application import application
 from app.application.forms import ApplicationForm
 from app.models.application import Application
-from app.models.server import Server
-
+from app.models.server import Server, fetch_server_with_entity
 
 @login_required
 @application.route('/create', methods=['GET', 'POST'])
 def create():
     """Creates an application in the database using the information entered by the form"""
+
     form = ApplicationForm()
-    form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
+
+    # Populating server dropdown with values from the server table
+    servers = fetch_server_with_entity(Server.name)
+    form.server.choices = [(s.name, s.name) for s in servers]
     form.server.choices.insert(0, ('Please Select', 'Please Select'))
 
     if request.method == 'POST':
@@ -24,8 +27,10 @@ def create():
         retrieved_application_by_url = find_application_by_url(form.url.data)
         retrieved_application_by_bitbucket = find_application_by_bitbucket(form.bitbucket.data)
 
+        #Check if new application has the same name, url or bitbucket an entry already in the database
         if retrieved_application_by_name or retrieved_application_by_url or retrieved_application_by_bitbucket:
             flash('An application with this name, url or bitbucket already exists within the system', category='error')
+        #If the form is valid add application to database
         elif form.validate_on_submit():
             try:
                 new_application = Application(name=form.name.data , team_email=form.team_email.data,team_name=form.team_name.data,
@@ -55,13 +60,17 @@ def update():
     form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
 
     if request.method == 'POST':
+
         retrieved_application_by_url = find_application_by_url(form.url.data)
         retrieved_application_by_bitbucket = find_application_by_bitbucket(form.bitbucket.data)
         retrieved_application_by_name = find_application_by_name(form.name.data)
+
+        # Checks if the updated application name, bitbucket or url conflicts with an existing entry in the database
         if (((retrieved_application_by_bitbucket and retrieved_application_by_bitbucket.id != retrieved_application.id)
              or (retrieved_application_by_url and retrieved_application_by_url.id != retrieved_application.id))
                 or (retrieved_application_by_name and retrieved_application_by_name.id != retrieved_application.id)):
             flash('There is an application with the same name, bitbucket or url already in the system', category='error')
+        # If form is valid update application information
         elif form.validate_on_submit():
             updated_application = form.data
             updated_application.pop('csrf_token', None)
@@ -79,7 +88,7 @@ def update():
                     flash('Application successfully updated', category='success')
                     redirect(url_for('application.all_applications'))
             else:
-                flash('Application cannot be updated as they do not exist', category='error',)
+                flash('Application cannot be updated as it does not exist', category='error',)
 
     return render_template('application/update-application.html', user = current_user, application = retrieved_application, form = form)
 
@@ -89,9 +98,11 @@ def delete():
     """This function deletes and application from the database. This action can only be completed my admin user.
     This function takes a query parameter of the application id"""
 
+    # Checks GET request was made to the endpoint and is user is an admin
     if request.method == 'GET' and current_user.is_admin:
         application_id = request.args.get('application_id')
         retrieved_application = find_application_by_id(application_id)
+        #Deletes server
         if retrieved_application:
             try:
                 db.session.delete(retrieved_application)
@@ -109,14 +120,14 @@ def delete():
 
     return redirect(url_for('application.all_applications'))
 
-def find_application_by_id(application_id):
+def find_application_by_id(id):
     """Find an application in the database using the applications id"""
     try:
-        retrieved_application = Application.query.get(application_id)
+        retrieved_application = Application.query.get(id)
         return retrieved_application
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst filtering the application table by id: %s', id)
         logging.error(err)
 
 def find_application_by_name(name):
@@ -126,7 +137,7 @@ def find_application_by_name(name):
         return retrieved_application
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst filtering application table by name: %s', name)
         logging.error(err)
 
 def find_application_by_url(url):
@@ -136,7 +147,7 @@ def find_application_by_url(url):
         return retrieved_application
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst filtering application table by url: %s', url)
         logging.error(err)
 
 def find_application_by_bitbucket(bitbucket):
@@ -146,7 +157,7 @@ def find_application_by_bitbucket(bitbucket):
         return retrieved_application
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst filtering application table by bitbucket: %s', bitbucket)
         logging.error(err)
 
 def find_applications_deployed_on_server(server_name):
@@ -159,7 +170,7 @@ def find_applications_deployed_on_server(server_name):
         return applications
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst querying the application table by entity: %s and filtering by server %s', (Application.name, server_name))
         logging.error(err)
 
 def fetch_all_applications():
@@ -169,7 +180,7 @@ def fetch_all_applications():
         return applications
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst fetching all rows in the application table')
         logging.error(err)
 
 @application.route('/all-applications')
@@ -177,4 +188,4 @@ def fetch_all_applications():
 def all_applications():
     """Renders the html for the grid to view all applications"""
     applications = fetch_all_applications()
-    return render_template('application/grid.html', user=current_user, list=applications)
+    return render_template('application/grid.html', user=current_user, applications=applications)

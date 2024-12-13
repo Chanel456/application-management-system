@@ -18,10 +18,12 @@ def create():
     form = ServerForm()
     if request.method == 'POST':
         retrieved_server = find_server_by_name(form.name.data)
-        logging.info(form.data)
 
+        # Checking if server already exists in database with the same name
         if retrieved_server:
             flash('A server with this name already exists within the system', category='error')
+
+        # If the create form is valid add server to database
         elif form.validate_on_submit():
             try:
                 new_server = Server(name=form.name.data, cpu=form.cpu.data,
@@ -51,8 +53,12 @@ def update():
 
     if request.method == 'POST':
         retrieved_server_by_name = find_server_by_name(form.name.data)
+
+        # Checks if the updated server name conflicts with an existing entry in the database
         if retrieved_server_by_name and retrieved_server_by_name.id != retrieved_server.id:
             flash('There is a server with the same name already in the system', category='error')
+
+        # If form is valid update server information
         elif form.validate_on_submit():
             updated_server = form.data
             updated_server.pop('csrf_token', None)
@@ -81,13 +87,17 @@ def delete():
     """This function deletes and server from the database. This action can only be completed my admin user.
         This function takes a query parameter of the server id"""
 
+    # Checks GET request was made to the endpoint and is user is an admin
     if request.method == 'GET' and current_user.is_admin:
         server_id = request.args.get('server_id')
         retrieved_server = find_server_by_id(server_id)
         applications_deployed_on_server = find_applications_deployed_on_server(retrieved_server.name)
+
+        # Checks if there are applications deployed on the server proposed to be deleted
         if applications_deployed_on_server:
             message = f'Server cannot be deleted as it is being application(s) {applications_deployed_on_server} are running on it'
             flash(message, category='error')
+        # Delete server
         elif retrieved_server:
             try:
                 db.session.delete(retrieved_server)
@@ -112,7 +122,7 @@ def find_server_by_id(server_id):
         return retrieved_server
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst finding server by id: %s', server_id)
         logging.error(err)
 
 def find_server_by_name(name):
@@ -122,17 +132,17 @@ def find_server_by_name(name):
         return retrieved_server
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst finding server by name: %s', name)
         logging.error(err)
 
 def fetch_all_servers():
     """Fetches all servers in the server table"""
     try:
-        applications = db.session.query(Server).all()
-        return applications
+        servers = db.session.query(Server).all()
+        return servers
     except SQLAlchemyError as err:
         db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
+        logging.error('An error occurred whilst fetching all rows in the server table')
         logging.error(err)
 
 @server.route('/all-servers')

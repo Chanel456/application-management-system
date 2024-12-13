@@ -2,7 +2,11 @@
 
 {% block content %}
 
-<p>OOPS! It looks like this page doesn't exist.</p>
-<p>If you entered the URL manually, please check your spelling and try again. <a href="{{url_for('views.dashboard')}}">If not return to the dashboard</a> </p>
+<div class="h-100 d-flex align-items-center justify-content-center my-5">
+    <div>
+        <p>OOPS! It looks like this page doesn't exist.</p>
+        <p>If you entered the URL manually, please check your spelling and try again. If not return to the <a href="{{url_for('views.dashboard')}}"> dashboard</a> </p>
+    </div>
+</div>
 
 {% endblock %}

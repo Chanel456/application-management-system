@@ -39,14 +39,13 @@ def register():
     """Registers a user and allows them to access the web application"""
     form = RegistrationForm()
     if request.method == 'POST':
-        logging.info(form.data)
         user = find_user_by_email(form.email.data)
         if user:
             flash('This user already exists. Please login', category='error')
         elif form.validate_on_submit():
             is_admin = True if form.account_type.data == 'admin' else False
             try:
-                new_user = User(email=form.email.data, first_name=form.first_name.data,
+                new_user = User(email=form.email.data, first_name=form.first_name.data, last_name=form.last_name.data,
                                 password=generate_password_hash(form.password.data, method='scrypt'), is_admin=is_admin)
                 db.session.add(new_user)
                 db.session.commit()

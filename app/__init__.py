@@ -1,4 +1,6 @@
 import logging
+from http.client import HTTPException
+
 from flask import Flask, render_template, url_for
 from flask_login import LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
@@ -27,14 +29,12 @@ def create_app(config_class=Config):
     from app.server import server
 
     #Register blueprints
-    app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(views, url_prefix='/views')
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(application, url_prefix='/application')
     app.register_blueprint(server, url_prefix='/server')
 
     from app.models.user import User
-    from app.models.application import create_applications
-    from app.models.server import create_servers
 
     with app.app_context():
         if not path.exists('app/' + DB_NAME):

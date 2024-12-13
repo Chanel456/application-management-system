@@ -28,11 +28,10 @@ class AuthActions(object):
     def __init__(self, client):
         self._client = client
 
-    def register(self, first_name, email, password, confirm_password, account_type):
-        # is_admin = True if is_admin == 'admin' else False
+    def register(self, first_name, last_name, email, password, confirm_password, account_type):
         return self._client.post(
             '/auth/register',
-            data={'first_name': first_name, 'email': email, 'password': password, 'confirm_password': confirm_password, 'account_type': account_type }
+            data={'first_name': first_name, 'last_name': last_name, 'email': email, 'password': password, 'confirm_password': confirm_password, 'account_type': account_type }
         )
 
     def login(self, email, password):
@@ -52,11 +51,11 @@ def auth(client):
 @pytest.fixture
 def init_user_table(app):
     with app.app_context():
-        user1 = User(first_name='testuser1', email='test.user1@gmail.com',
+        user1 = User(first_name='Testuser1', last_name='Smith', email='test.user1@gmail.com',
                      password=generate_password_hash('#Password12345', method='scrypt'), is_admin=True)
-        user2 = User(first_name='testuser2', email='test.user2@gmail.com',
+        user2 = User(first_name='Testuser2', last_name='Jones', email='test.user2@gmail.com',
                      password=generate_password_hash('#Password5678', method='scrypt'), is_admin=True)
-        user3 = User(first_name='testuser3', email='test.user3@gmail.com',
+        user3 = User(first_name='testuser3', last_name='Davis', email='test.user3@gmail.com',
                      password=generate_password_hash('#Password1357', method='scrypt'), is_admin=True)
         db.session.add(user1)
         db.session.add(user2)

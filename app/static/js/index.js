@@ -59,7 +59,8 @@ function format ( d ) {
                   extend: 'excelHtml5',
                   exportOptions: {
                       columns: [1,2,3,4, 6, 7, 8, 9, 10]
-                  }
+                  },
+                  title:'Asset Management System - Applications'
                 },
             ]
 
@@ -100,7 +101,8 @@ var table2 = $('#serverTable').DataTable({
                         extend: 'excelHtml5',
                         exportOptions: {
                             columns: [0,1,2,3]
-                        }
+                        },
+                        title:'Asset Management System - Servers'
                     }
                 ]
             },

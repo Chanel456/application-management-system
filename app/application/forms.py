@@ -15,6 +15,8 @@ class ApplicationForm(FlaskForm):
         Name of the application
     team_name: text
        Name of the development team who owns the application
+    team_email : email
+        Email address of development team who owns the application
     url: url
         Url for the application
     swagger: url
@@ -40,21 +42,26 @@ class ApplicationForm(FlaskForm):
     server = SelectField('Server', [DataRequired()], coerce=str)
 
     def validate_team_email(self, field):
+        """Checks if the email address is valid using the validators package"""
         if not valid_package.email(field.data):
             raise ValidationError('Please enter a valid email')
 
     def validate_server(self, field):
+        """Ensures the users has selected a server and is not submitted the placeholder field"""
         if field.data == 'Please Select':
             raise ValidationError('Please select a server')
 
     def validate_bitbucket(self, field):
-        if 'https://bitbucket.com' not in field.data or not valid_package.url(field.data):
+        """Validates if bitbucket url starts with https://bitbucket.com"""
+        if not field.data.startswith('https://bitbucket.com') or not valid_package.url(field.data):
             raise ValidationError('Please enter a valid bitbucket url. Url should start with https://bitbucket.com')
 
     def validate_swagger(self, field):
+        """Checks if a valid url was entered for swagger"""
         if not valid_package.url(field.data):
             raise ValidationError('Please enter a valid url')
 
     def validate_url(self, field):
+        """Checks if a valid url was entered for the application url"""
         if not valid_package.url(field.data):
             raise ValidationError('Please enter a valid url')

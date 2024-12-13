@@ -26,26 +26,26 @@
             </tr>
             </thead>
             <tbody>
-            {% for item in list %}
+            {% for app in applications %}
             <tr>
                 <td></td>
-                <td>{{item.name}}</td>
-                <td>{{item.team_name}}</td>
-                <td>{{item.server}}</td>
-                <td>{{item.production_pods}}</td>
+                <td>{{app.name}}</td>
+                <td>{{app.team_name}}</td>
+                <td>{{app.server}}</td>
+                <td>{{app.production_pods}}</td>
                 <td>
-                    <a href="{{url_for('application.update', application_id = item.id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
+                    <a href="{{url_for('application.update', application_id = app.id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
                     {% if user.is_admin %}
-                    <a href="/delete/{{item.id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteapplication{{item.id}}"><i class="bi bi-trash fs-4 text-danger mx-1"></i></a>
+                    <a href="/delete/{{app.id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteapplication{{app.id}}"><i class="bi bi-trash fs-4 text-danger mx-1"></i></a>
                     {% endif %}
                 </td>
-                <td>{{item.team_email}}</td>
-                <td>{{item.url}}</td>
-                <td>{{item.swagger}}</td>
-                <td>{{item.bitbucket}}</td>
-                <td>{{item.extra_info}}</td>
+                <td>{{app.team_email}}</td>
+                <td>{{app.url}}</td>
+                <td>{{app.swagger}}</td>
+                <td>{{app.bitbucket}}</td>
+                <td>{{app.extra_info}}</td>
             </tr>
-        <div class="modal fade" id="modeldeleteapplication{{item.id}}" tabindex="-1" aria-labelledby="modelDeleteApplicationLabel" aria-hidden="true">
+        <div class="modal fade" id="modeldeleteapplication{{app.id}}" tabindex="-1" aria-labelledby="modelDeleteApplicationLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
@@ -55,10 +55,10 @@
                                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
                             </svg>
                             <h3>Are you sure?</h3>
-                            <p>Are you sure you want to delete the application {{item.name}}. This process cannot be undone</p>
+                            <p>Are you sure you want to delete the application {{app.name}}. This process cannot be undone</p>
                             <div>
-                                <a href="{{url_for('application.all_applications')}}" class="button btn btn-secondary">Cancel</a>
-                                <a href="{{url_for('application.delete', application_id = item.id)}}" class="button btn btn-danger">Delete</a>
+                                <a href="" class="button btn btn-secondary">Cancel</a>
+                                <a href="{{url_for('application.delete', application_id = app.id)}}" class="button btn btn-danger">Delete</a>
                             </div>
                         </div>
                     </div>

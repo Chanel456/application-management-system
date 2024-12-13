@@ -4,7 +4,7 @@ from app.models.server import Server
 from app.server.routes import find_server_by_id, find_server_by_name
 
 def test_create(client, app, auth):
-    auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
+    auth.register('Test', 'Smith', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
     auth.login('test@gmail.com', '#Password12345')
 
     with client:
@@ -17,7 +17,7 @@ def test_create(client, app, auth):
 
 
 def test_update(client, app, auth):
-    auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
+    auth.register('Test', 'Smith', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
     auth.login('test@gmail.com', '#Password12345')
 
     client.post('/server/create',
@@ -37,7 +37,7 @@ def test_update(client, app, auth):
 
 
 def test_delete_admin_passes(client, app, auth):
-    auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'admin')
+    auth.register('Test', 'Smith', 'test@gmail.com', '#Password12345', '#Password12345', 'admin')
     auth.login('test@gmail.com', '#Password12345')
 
     client.post('/server/create',
@@ -55,7 +55,7 @@ def test_delete_admin_passes(client, app, auth):
 
 
 def test_delete_regular_fails(client, app, auth):
-    auth.register('Test', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
+    auth.register('Test', 'Smith', 'test@gmail.com', '#Password12345', '#Password12345', 'regular')
     auth.login('test@gmail.com', '#Password12345')
 
     client.post('/server/create',
