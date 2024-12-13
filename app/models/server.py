@@ -12,7 +12,6 @@ class Server (db.Model):
     cpu = db.Column(db.Integer)
     memory = db.Column(db.Integer)
     location = db.Column(db.String(150))
-    created = db.Column(db.DateTime, default=datetime.datetime.now())
 
 @event.listens_for(Server.__table__, 'after_create')
 def create_servers(*args, **kwargs):

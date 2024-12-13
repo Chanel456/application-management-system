@@ -29,8 +29,6 @@ class Application(db.Model):
             the number of pods this application has up in production
         server: string
             The server the application is deployed on
-        created: datetime
-            The time this record was created
         """
 
     id = db.Column(db.Integer, primary_key = True)
@@ -43,7 +41,6 @@ class Application(db.Model):
     extra_info = db.Column(db.Text(200), nullable = True)
     production_pods = db.Column(db.Integer)
     server = db.Column(db.String(150))
-    created: datetime.datetime= db.Column(db.DateTime, default=datetime.datetime.now())
 
 @event.listens_for(Application.__table__, 'after_create')
 def create_applications(*args, **kwargs):
