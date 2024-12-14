@@ -28,10 +28,10 @@ class RegistrationForm(FlaskForm):
     """
     account_type = RadioField('Select Account Type:',[DataRequired()], choices=[('admin','Admin'),('regular','Regular')])
     email = EmailField('Email', [DataRequired()])
-    first_name = StringField('First Name', [DataRequired(), validators.Length(min=2, max=15), validators.Regexp('^[A-Za-z]+$', message='First name must only contain alphabetic characters')])
-    last_name = StringField('Last Name', [DataRequired(), validators.Length(min=2, max=15), validators.Regexp('^[A-Za-z]+$', message='Last name must only contain alphabetic characters')])
+    first_name = StringField('First Name', [DataRequired(), validators.Length(min=2, max=15), validators.Regexp('^[A-Za-z-]+$', message='First name must only contain alphabetic characters and hyphens. First name cannot start or end with a hyphen')])
+    last_name = StringField('Last Name', [DataRequired(), validators.Length(min=2, max=15), validators.Regexp('^[A-Za-z-]+$', message='Last name must only contain alphabetic characters and hyphens. Last name cannot start or end with a hyphen')])
     password = PasswordField('Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character [!@#$%^&*()_+] and be at least 7 characters long'), validators.Length(min=7, max=20), validators.EqualTo('confirm_password', message='Passwords must match')])
-    confirm_password = PasswordField('Confirm Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character [!@#$%^&*()_+] and be at least 7 characters long'), validators.EqualTo('password', message='Passwords do not match')])
+    confirm_password = PasswordField('Confirm Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character [!@#$%^&*()_+] and be at least 7 characters long'), validators.EqualTo('password', message='Passwords must match')])
 
     def validate_email(self, field):
         """Checks if the email address is valid using the validators package"""

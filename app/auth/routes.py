@@ -41,7 +41,7 @@ def register():
     if request.method == 'POST':
         user = find_user_by_email(form.email.data)
         if user:
-            flash('This user already exists. Please login', category='error')
+            flash('An account with this email address already exists. Please login', category='error')
         elif form.validate_on_submit():
             is_admin = True if form.account_type.data == 'admin' else False
             try:

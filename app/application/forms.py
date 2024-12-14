@@ -36,7 +36,7 @@ class ApplicationForm(FlaskForm):
     team_email = EmailField('Development team email', [DataRequired()])
     url = URLField('Application URL', [DataRequired()])
     swagger = URLField('Application swagger')
-    bitbucket = URLField('Bitbucket link', [DataRequired()])
+    bitbucket = URLField('Bitbucket', [DataRequired()])
     extra_info = TextAreaField('Extra information', [validators.Length(max=250)])
     production_pods = IntegerField('Number of production pods', [DataRequired()])
     server = SelectField('Server', [DataRequired()], coerce=str)

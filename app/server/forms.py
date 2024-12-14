@@ -23,4 +23,4 @@ class ServerForm(FlaskForm):
     name = StringField('Server Name', [DataRequired(), validators.Regexp('^[a-z]{2}[0-9]{4}$', message='Name should contain 2 lowercase letters followed by 4 numbers')])
     cpu = IntegerField('CPU (GHz)', [DataRequired()])
     memory = IntegerField('Memory (GiB)', [DataRequired()])
-    location = StringField('Location', [DataRequired(), validators.Regexp('^[a-zA-Z]+$', message='Location can only contain alphabetic characters')])
+    location = StringField('Location', [DataRequired(), validators.Regexp('^[a-zA-Z\s]+$', message='Location can only contain alphabetic characters')])

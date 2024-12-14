@@ -49,7 +49,7 @@ def create_applications(*args, **kwargs):
         db.session.add(Application(name='Example App One', team_name='Team One',
                                    team_email='team.one@gmail.com', url='https://exampleappone.com',
                                    swagger='https://exampleappone.com/swagger/ui',
-                                   bitbucket='https://bitbucket.com/repos/exampleappone', extra_info='',
+                                   bitbucket='https://bitbucket.com/repos/exampleappone', extra_info='This is a Java application that uses the springboot framework.',
                                    production_pods=1, server='ab0001'))
         db.session.add(Application(name='Example App Two', team_name='Team Two',
                                    team_email='team.two@gmail.com', url='https://exampleapptwo.com',
