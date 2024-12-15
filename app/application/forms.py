@@ -2,7 +2,7 @@ import validators as valid_package
 
 from flask_wtf import FlaskForm
 from wtforms import validators, StringField, EmailField, URLField, TextAreaField, IntegerField, SelectField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, ValidationError, NumberRange
 
 
 class ApplicationForm(FlaskForm):
@@ -38,7 +38,7 @@ class ApplicationForm(FlaskForm):
     swagger = URLField('Application swagger')
     bitbucket = URLField('Bitbucket', [DataRequired()])
     extra_info = TextAreaField('Extra information', [validators.Length(max=250)])
-    production_pods = IntegerField('Number of production pods', [DataRequired()])
+    production_pods = IntegerField('Number of production pods', [DataRequired(), NumberRange(min=0)])
     server = SelectField('Server', [DataRequired()], coerce=str)
 
     def validate_team_email(self, field):

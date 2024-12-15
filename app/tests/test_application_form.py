@@ -7,14 +7,14 @@ from app.models.server import Server
 def test_application_form_passes(app, init_server_table):
     with app.app_context():
         with app.test_request_context():
-            form = ApplicationForm(data = {'name': 'Example App', 'team_name': 'Team One', 'team_email': 'teamone@gmail.com', 'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone', 'extra_info': '', 'production_pods': 2, 'server': 'exampleserver1'})
+            form = ApplicationForm(data = {'name': 'Example App', 'team_name': 'Team One', 'team_email': 'teamone@gmail.com', 'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone', 'extra_info': '', 'production_pods': 2, 'server': 'aa1234'})
             form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
             assert form.validate() == True
 
 def test_application_form_missing_required_data_validation_fails(app):
     with app.app_context():
         with app.test_request_context():
-            form = ApplicationForm(data = {'name': None, 'team_name': None , 'team_email': None , 'url': 'https://exampleappone.com', 'swagger_link': 'https://exampleappone.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone', 'extra_info': '', 'production_pods': 2, 'server': 'exampleserver1'})
+            form = ApplicationForm(data = {'name': None, 'team_name': None , 'team_email': None , 'url': 'https://exampleappone.com', 'swagger_link': 'https://exampleappone.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone', 'extra_info': '', 'production_pods': 2, 'server': 'aa1234'})
             form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
             assert form.validate() == False
 
@@ -22,7 +22,7 @@ def test_application_form_missing_required_data_validation_fails(app):
 def test_server_form_invalid_input_validation_fails(app):
     with app.app_context():
         with app.test_request_context():
-            form = ApplicationForm(data = {'name': '1234567', 'team_name': '431689708', 'team_email': 'teamone@gmail.com', 'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone', 'extra_info': '', 'production_pods': 2, 'server': 'exampleserver1'})
+            form = ApplicationForm(data = {'name': '1234567', 'team_name': '431689708', 'team_email': 'teamone@gmail.com', 'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger/ui', 'bitbucket': 'https://bitbucket.com/repos/exampleappone', 'extra_info': '', 'production_pods': 2, 'server': 'aa1234'})
             form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
             assert form.validate() == False
             assert form.errors.get('name')[0] == 'Application name must only contain alphabetic characters and hyphens'
@@ -48,7 +48,7 @@ def test_validate_server_passes(app, init_server_table):
     with app.app_context():
         with app.test_request_context():
             form = ApplicationForm()
-            form.server.data = 'exampleserver1'
+            form.server.data = 'aa1234'
             form.validate_server(form.server)
             assert len(form.server.errors) == 0
 

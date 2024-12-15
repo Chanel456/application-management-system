@@ -1,5 +1,6 @@
-import datetime
 import logging
+
+from flask import flash
 from sqlalchemy import event
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -40,7 +41,108 @@ class Application(db.Model):
     bitbucket = db.Column(db.String(200), unique = True)
     extra_info = db.Column(db.Text(200), nullable = True)
     production_pods = db.Column(db.Integer)
-    server = db.Column(db.String(150))
+    server = db.Column(db.String(6), db.ForeignKey('server.name'))
+
+    @staticmethod
+    def find_application_by_id(id):
+        """Find an application in the database using the applications id"""
+        try:
+            retrieved_application = Application.query.get(id)
+            return retrieved_application
+        except SQLAlchemyError as err:
+            logging.error('An error occurred whilst filtering the application table by id: %s', id)
+            logging.error(err)
+
+    @staticmethod
+    def find_application_by_name(name):
+        """Finds an application in the database by the application name"""
+        try:
+            retrieved_application = Application.query.filter_by(name=name).first()
+            return retrieved_application
+        except SQLAlchemyError as err:
+            logging.error('An error occurred whilst filtering application table by name: %s', name)
+            logging.error(err)
+
+    @staticmethod
+    def find_application_by_url(url):
+        """Finds an application in the database by the application url"""
+        try:
+            retrieved_application = Application.query.filter_by(url=url).first()
+            return retrieved_application
+        except SQLAlchemyError as err:
+            logging.error('An error occurred whilst filtering application table by url: %s', url)
+            logging.error(err)
+
+    @staticmethod
+    def find_application_by_bitbucket(bitbucket):
+        """Finds an application in the database by the application bitbucket url"""
+        try:
+            retrieved_application = Application.query.filter_by(bitbucket=bitbucket).first()
+            return retrieved_application
+        except SQLAlchemyError as err:
+            logging.error('An error occurred whilst filtering application table by bitbucket: %s', bitbucket)
+            logging.error(err)
+
+
+    @staticmethod
+    def fetch_all_applications():
+        """Fetches all applications in the application table"""
+        try:
+            applications = db.session.query(Application).all()
+            return applications
+        except SQLAlchemyError as err:
+            logging.error('An error occurred whilst fetching all rows in the application table')
+            logging.error(err)
+
+    @staticmethod
+    def create_application(name, team_name, team_email, url, swagger, bitbucket, production_pods, extra_info, server):
+        """Creates a new application and adds it to the database"""
+        try:
+            new_application = Application(name=name, team_email=team_email, team_name=team_name, url=url, swagger=swagger,
+                                          bitbucket=bitbucket,production_pods=production_pods, extra_info=extra_info,
+                                          server=server)
+            db.session.add(new_application)
+            db.session.commit()
+        except SQLAlchemyError as err:
+            db.session.rollback()
+            logging.error('Unable to create application: %s', name)
+            logging.error(err)
+            flash('Unable to create application', category='error')
+        else:
+            logging.info('Application %s added successfully', name)
+            flash('Application added successfully', category='success')
+
+    @staticmethod
+    def update_application(application_id, updated_application):
+        """Updates an existing application in the database"""
+        try:
+            db.session.query(Application).filter_by(id=application_id).update(updated_application)
+            db.session.commit()
+        except SQLAlchemyError as err:
+            db.session.rollback()
+            logging.error('An error was encountered when updating application with id: %s', application_id)
+            logging.error(err)
+            flash('Unable to update application', category='error')
+        else:
+            logging.info('Application: %s successfully updated', updated_application['name'])
+            flash('Application successfully updated', category='success')
+
+
+    @staticmethod
+    def delete_application(application):
+        """Deletes an application from the database"""
+        try:
+            db.session.delete(application)
+            db.session.commit()
+        except SQLAlchemyError as err:
+            db.session.rollback()
+            logging.error('An error was encountered when deleting application with id: %s', application.id)
+            logging.error(err)
+            flash('Unable to delete application', category='error')
+        else:
+            logging.info('Application: %s deleted successfully', application.name)
+            flash('Application deleted successfully', category='success')
+
 
 @event.listens_for(Application.__table__, 'after_create')
 def create_applications(*args, **kwargs):

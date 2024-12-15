@@ -1,7 +1,5 @@
 from flask_login import current_user
 
-from app.application.routes import find_application_by_id, find_application_by_name, find_application_by_url, \
-    find_application_by_bitbucket, find_applications_deployed_on_server
 from app.models.application import Application
 
 def test_create(client, app, auth, init_server_table):
@@ -14,7 +12,7 @@ def test_create(client, app, auth, init_server_table):
                                    data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                                          'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                                          'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                                         'production_pods': 3, 'server': 'exampleserver1'})
+                                         'production_pods': 3, 'server': 'aa1234'})
             assert response.status_code == 200
             application = Application.query.filter_by(name='Example App').first()
             assert application is not None
@@ -28,7 +26,7 @@ def test_update(client, app, auth, init_server_table):
                     data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                           'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                          'production_pods': 3, 'server': 'exampleserver1'})
+                          'production_pods': 3, 'server': 'aa1234'})
 
     with app.app_context():
         application = Application.query.filter_by(name='Example App').first()
@@ -40,7 +38,7 @@ def test_update(client, app, auth, init_server_table):
                             data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'newteamemail@gmail.com',
                                   'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                                   'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                                  'production_pods': 3, 'server': 'exampleserver1'})
+                                  'production_pods': 3, 'server': 'aa1234'})
         assert response.status_code == 200
         application = Application.query.filter_by(id=application.id).first()
         assert application.team_email == 'newteamemail@gmail.com'
@@ -55,7 +53,7 @@ def test_delete_admin_passes(client, app, auth, init_server_table):
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                           'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                          'production_pods': 3, 'server': 'exampleserver1'})
+                          'production_pods': 3, 'server': 'aa1234'})
 
 
     with app.app_context():
@@ -76,7 +74,7 @@ def test_delete_regular_fails(client, app, auth, init_server_table):
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                           'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                          'production_pods': 3, 'server': 'exampleserver1'})
+                          'production_pods': 3, 'server': 'aa1234'})
 
 
     with app.app_context():
@@ -90,50 +88,41 @@ def test_delete_regular_fails(client, app, auth, init_server_table):
         assert application is not None
 
 def test_find_app_by_name_found(init_application_table):
-    application = find_application_by_name('App One')
+    application = Application.find_application_by_name('App One')
     assert application is not None
     assert application.name == 'App One'
     assert application.url == 'https://appone.com'
 
 def test_find_app_by_name_not_found(init_application_table):
-    application = find_application_by_name('Example App Not Found')
+    application = Application.find_application_by_name('Example App Not Found')
     assert application is None
 
 def test_find_app_by_id_found(init_application_table):
-    application = find_application_by_id('13')
+    application = Application.find_application_by_id('13')
     assert application is not None
     assert application.name == 'App Three'
     assert application.url == 'https://appthree.com'
 
 def test_find_app_by_id_not_found(init_application_table):
-    application = find_application_by_id('23456789')
+    application = Application.find_application_by_id('23456789')
     assert application is None
 
 def test_find_app_by_url_found(init_application_table):
-    application = find_application_by_url('https://appone.com')
+    application = Application.find_application_by_url('https://appone.com')
     assert application is not None
     assert application.name == 'App One'
     assert application.production_pods == 1
 
 def test_find_app_by_url_not_found(init_application_table):
-    application = find_application_by_url('https://urlnotfound.com')
+    application = Application.find_application_by_url('https://urlnotfound.com')
     assert application is None
 
 def test_find_app_by_bitbucket_found(init_application_table):
-    application = find_application_by_bitbucket('https://bitbucket.com/repos/apptwo')
+    application = Application.find_application_by_bitbucket('https://bitbucket.com/repos/apptwo')
     assert application is not None
     assert application.name == 'App Two'
     assert application.production_pods == 1
 
 def test_find_app_by_bitbucket_not_found(init_application_table):
-    application = find_application_by_bitbucket('https:/bitbucketnotfound.com')
+    application = Application.find_application_by_bitbucket('https:/bitbucketnotfound.com')
     assert application is None
-
-def test_find_applications_deployed_on_server_found(init_application_table):
-    applications = find_applications_deployed_on_server('ab0001')
-    assert applications is not None
-    assert len(applications) >= 1
-
-def test_find_applications_deployed_on_server_not_found(init_application_table):
-    applications = find_applications_deployed_on_server('invalid server')
-    assert len(applications) == 0

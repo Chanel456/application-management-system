@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 
 from wtforms import validators, StringField, IntegerField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, NumberRange
 
 
 class ServerForm(FlaskForm):
@@ -21,6 +21,6 @@ class ServerForm(FlaskForm):
     """
 
     name = StringField('Server Name', [DataRequired(), validators.Regexp('^[a-z]{2}[0-9]{4}$', message='Name should contain 2 lowercase letters followed by 4 numbers')])
-    cpu = IntegerField('CPU (GHz)', [DataRequired()])
-    memory = IntegerField('Memory (GiB)', [DataRequired()])
+    cpu = IntegerField('CPU (GHz)', [DataRequired(), NumberRange(min=0)])
+    memory = IntegerField('Memory (GiB)', [DataRequired(), NumberRange(min=0)])
     location = StringField('Location', [DataRequired(), validators.Regexp('^[a-zA-Z\s]+$', message='Location can only contain alphabetic characters')])

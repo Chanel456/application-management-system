@@ -90,9 +90,9 @@ def init_application_table(app):
 @pytest.fixture
 def init_server_table(app):
     with app.app_context():
-        server1 = Server(name='exampleserver1', cpu=123, memory=123, location='Walthamstow')
-        server2 = Server(name='exampleserver2', cpu=456, memory=456, location='Harrow')
-        server3 = Server(name='exampleserver3', cpu=789, memory=789, location='Surrey')
+        server1 = Server(name='aa1234', cpu=123, memory=123, location='Walthamstow')
+        server2 = Server(name='aa2345', cpu=456, memory=456, location='Harrow')
+        server3 = Server(name='aa3456', cpu=789, memory=789, location='Surrey')
         db.session.add(server1)
         db.session.add(server2)
         db.session.add(server3)

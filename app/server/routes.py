@@ -1,11 +1,6 @@
-import logging
-
 from flask import render_template, flash, request, url_for, redirect
 from flask_login import login_required, current_user
-from sqlalchemy.exc import SQLAlchemyError
 
-from app import db
-from app.application.routes import find_applications_deployed_on_server
 from app.models.server import Server
 from app.server import server
 from app.server.forms import ServerForm
@@ -17,7 +12,7 @@ def create():
     """Creates a server in the database using the information entered by the form"""
     form = ServerForm()
     if request.method == 'POST':
-        retrieved_server = find_server_by_name(form.name.data)
+        retrieved_server = Server.find_server_by_name(form.name.data)
 
         # Checking if server already exists in database with the same name
         if retrieved_server:
@@ -25,20 +20,7 @@ def create():
 
         # If the create form is valid add server to database
         elif form.validate_on_submit():
-            try:
-                new_server = Server(name=form.name.data, cpu=form.cpu.data,
-                                              memory=form.memory.data,
-                                              location=form.location.data, )
-                db.session.add(new_server)
-                db.session.commit()
-            except SQLAlchemyError as err:
-                db.session.rollback()
-                logging.error('Unable to create server: %s', form.name.data)
-                logging.error(err)
-                flash('Unable to create server', category='error')
-            else:
-                logging.info('Server %s added successfully', form.name.data)
-                flash('Server added successfully', category='success')
+            Server.create_server(form.name.data, form.cpu.data, form.memory.data, form.location.data)
 
     return render_template('server/add-server.html', user=current_user, form=form)
 
@@ -48,11 +30,11 @@ def update():
     """Updates a servers details in the database. This endpoint takes a query parameter of the server id"""
 
     server_id = request.args.get('server_id')
-    retrieved_server = find_server_by_id(server_id)
+    retrieved_server = Server.find_server_by_id(server_id)
     form = ServerForm(obj=retrieved_server)
 
     if request.method == 'POST':
-        retrieved_server_by_name = find_server_by_name(form.name.data)
+        retrieved_server_by_name = Server.find_server_by_name(form.name.data)
 
         # Checks if the updated server name conflicts with an existing entry in the database
         if retrieved_server_by_name and retrieved_server_by_name.id != retrieved_server.id:
@@ -63,18 +45,7 @@ def update():
             updated_server = form.data
             updated_server.pop('csrf_token', None)
             if retrieved_server:
-                try:
-                    db.session.query(Server).filter_by(id=server_id).update(updated_server)
-                    db.session.commit()
-                except SQLAlchemyError as err:
-                    db.session.rollback()
-                    logging.error('Unable to update server: %s', updated_server['name'])
-                    logging.error(err)
-                    flash('Unable to update server', category='error')
-                else:
-                    logging.info('Server: %s successfully updated', updated_server['name'])
-                    flash('Server successfully updated', category='success')
-                    redirect(url_for('server.all_servers'))
+                Server.update_server(server_id, updated_server)
             else:
                 flash('Server cannot be updated as they do not exist', category='error', )
 
@@ -90,64 +61,26 @@ def delete():
     # Checks GET request was made to the endpoint and is user is an admin
     if request.method == 'GET' and current_user.is_admin:
         server_id = request.args.get('server_id')
-        retrieved_server = find_server_by_id(server_id)
-        applications_deployed_on_server = find_applications_deployed_on_server(retrieved_server.name)
+        retrieved_server = Server.find_server_by_id(server_id)
+        applications_deployed_on_server = retrieved_server.applications
 
         # Checks if there are applications deployed on the server proposed to be deleted
         if applications_deployed_on_server:
-            message = f'Server cannot be deleted as it is being application(s) {applications_deployed_on_server} are running on it'
+            applications = ', '.join([app.name for app in applications_deployed_on_server])
+            message = f'Server cannot be deleted as application(s) {applications} are running on it'
             flash(message, category='error')
         # Delete server
         elif retrieved_server:
-            try:
-                db.session.delete(retrieved_server)
-                db.session.commit()
-            except SQLAlchemyError as err:
-                db.session.rollback()
-                logging.error('Unable to delete server: %s', retrieved_server.name)
-                logging.error(err)
-                flash('Unable to delete server', category='error')
-            else:
-                logging.info('Server: %s deleted successfully', retrieved_server.name)
-                flash('Server deleted successfully', category='success')
+            pass
+            Server.delete_server(retrieved_server)
         else:
             flash('Server cannot be deleted as it does not exist', category='error')
 
     return redirect(url_for('server.all_servers'))
 
-def find_server_by_id(server_id):
-    """Find a server in the database using the server id"""
-    try:
-        retrieved_server = Server.query.get(server_id)
-        return retrieved_server
-    except SQLAlchemyError as err:
-        db.session.rollback()
-        logging.error('An error occurred whilst finding server by id: %s', server_id)
-        logging.error(err)
-
-def find_server_by_name(name):
-    """Finds a server in the database by the server name"""
-    try:
-        retrieved_server = Server.query.filter_by(name=name).first()
-        return retrieved_server
-    except SQLAlchemyError as err:
-        db.session.rollback()
-        logging.error('An error occurred whilst finding server by name: %s', name)
-        logging.error(err)
-
-def fetch_all_servers():
-    """Fetches all servers in the server table"""
-    try:
-        servers = db.session.query(Server).all()
-        return servers
-    except SQLAlchemyError as err:
-        db.session.rollback()
-        logging.error('An error occurred whilst fetching all rows in the server table')
-        logging.error(err)
-
 @server.route('/all-servers')
 @login_required
 def all_servers():
     """Renders the html for the grid to view all servers"""
-    servers = fetch_all_servers()
+    servers = Server.fetch_all_servers()
     return render_template('server/grid.html', user=current_user, list=servers)
