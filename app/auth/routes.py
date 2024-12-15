@@ -14,7 +14,7 @@ def login():
     """Logs in a user to the application based on the credentials submitted in the form"""
     form = LoginForm()
     if request.method == 'POST':
-        user = find_user_by_email(form.email.data)
+        user = find_user_by_email(form.login_email.data)
         if user:
             if form.validate_on_submit():
                    login_user(user, remember = True)

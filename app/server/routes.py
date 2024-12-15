@@ -47,7 +47,8 @@ def update():
             if retrieved_server:
                 Server.update_server(server_id, updated_server)
             else:
-                flash('Server cannot be updated as they do not exist', category='error', )
+                message = f'Server {retrieved_server.name} cannot be updated as they do not exist'
+                flash(message, category='error', )
 
     return render_template('server/update-server.html', user=current_user, form=form, server = retrieved_server)
 
@@ -67,14 +68,14 @@ def delete():
         # Checks if there are applications deployed on the server proposed to be deleted
         if applications_deployed_on_server:
             applications = ', '.join([app.name for app in applications_deployed_on_server])
-            message = f'Server cannot be deleted as application(s) {applications} are running on it'
+            message = f'Server {retrieved_server.name} cannot be deleted as application(s) {applications} are running on it'
             flash(message, category='error')
         # Delete server
         elif retrieved_server:
-            pass
             Server.delete_server(retrieved_server)
         else:
-            flash('Server cannot be deleted as it does not exist', category='error')
+            message = f'Server {retrieved_server.name} cannot be deleted as it does not exist'
+            flash(message, category='error')
 
     return redirect(url_for('server.all_servers'))
 

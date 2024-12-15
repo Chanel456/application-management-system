@@ -1,0 +1,8 @@
+.required::after {
+    content: ' *'; color: red;
+}
+
+.char-counter {
+    font-size: 0.9em;
+    color: #6c757d;
+}

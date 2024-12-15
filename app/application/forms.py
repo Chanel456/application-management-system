@@ -31,13 +31,13 @@ class ApplicationForm(FlaskForm):
         The server the application is deployed on
     """
 
-    name = StringField('Application Name', [DataRequired(), validators.Length(min=2, max=70), validators.Regexp('^[a-zA-Z- ]+$', message='Application name must only contain alphabetic characters and hyphens')])
-    team_name = StringField('Development team', [DataRequired(), validators.Length(min=3, max=30), validators.Regexp('^[a-zA-Z- ]+$', message='Team name must only contain alphabetic characters hyphens')])
-    team_email = EmailField('Development team email', [DataRequired()])
-    url = URLField('Application URL', [DataRequired()])
-    swagger = URLField('Application swagger')
-    bitbucket = URLField('Bitbucket', [DataRequired()])
-    extra_info = TextAreaField('Extra information', [validators.Length(max=250)])
+    name = StringField('Application Name', [DataRequired(), validators.Length(min=2, max=150, message='Name must be between 2 and 150 characters cannot exceed 150 characters'), validators.Regexp('^[a-zA-Z- ]+$', message='Application name must only contain alphabetic characters and hyphens')])
+    team_name = StringField('Development team', [DataRequired(), validators.Length(min=2, max=50, message='Development team name must be between 2 and 150 characters'), validators.Regexp('^[a-zA-Z- ]+$', message='Team name must only contain alphabetic characters hyphens')])
+    team_email = EmailField('Development team email', [DataRequired(), validators.length(max=150, message='Development team email cannot exceed 150 characters')])
+    url = URLField('Application URL', [DataRequired(), validators.Length(max=200, message='URL cannot exceed 150 characters')])
+    swagger = URLField('Swagger URL', [validators.Length(max=200, message='Swagger URL cannot exceed 200 characters')])
+    bitbucket = URLField('Bitbucket URL', [DataRequired(), validators.Length(max=200, message='Bitbucket URL cannot exceed 200 characters')])
+    extra_info = TextAreaField('Extra information', [validators.Length(max=700, message='Extra Information cannot exceed 700 characters')])
     production_pods = IntegerField('Number of production pods', [DataRequired(), NumberRange(min=0)])
     server = SelectField('Server', [DataRequired()], coerce=str)
 

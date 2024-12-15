@@ -110,3 +110,11 @@ var table2 = $('#serverTable').DataTable({
             bottom: ['info', 'pageLength', 'paging']
       }
 })
+
+const textarea = document.getElementById('extra_info');
+const charCount = document.getElementById('charCount');
+const maxLength = textarea.getAttribute('maxlength');
+
+textarea.addEventListener('input', () => {
+    const remaining = maxLength - textarea.value.length; charCount.textContent = `${remaining} characters remaining`;
+});

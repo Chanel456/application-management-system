@@ -1,7 +1,7 @@
 {% macro render_field(field) %}
 {% if field.type == 'RadioField'%}
   <dd>
-    <dt>{{ field.label }}</dt>
+    <dt>{{ field.label(class="required") }}</dt>
       {{ field(**kwargs)|safe }}
 
       {% if field.errors %}
@@ -19,7 +19,15 @@
   <dd>
     <div class="form-floating mb-3">
       {{ field(**kwargs)|safe }}
-      {{ field.label }}
+      {% if field.type == 'TextAreaField' %}
+      <div id="charCount" class="char-counter">700 characters remaining</div>
+      {% endif %}
+
+      {% if field.name == 'extra_info' or field.name == 'swagger' or field.name == 'login_email' or field.name == 'login_password' %}
+        {{ field.label }}
+      {% else %}
+        {{ field.label(class="required") }}
+      {% endif %}
       {% if field.errors %}
     <ul class="list-unstyled">
     {% for error in field.errors %}

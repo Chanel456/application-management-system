@@ -64,7 +64,8 @@ def update():
             if retrieved_application:
                 Application.update_application(application_id, updated_application)
             else:
-                flash('Application cannot be updated as it does not exist', category='error',)
+                message = f'Application {retrieved_application.name} cannot be updated as they do not exist'
+                flash(message, category='error',)
 
     return render_template('application/update-application.html', user = current_user, application = retrieved_application, form = form)
 
@@ -83,7 +84,8 @@ def delete():
         if retrieved_application:
             Application.delete_application(retrieved_application)
         else:
-            flash('Application cannot be deleted as it does not exist', category='error')
+            message = f'Application {retrieved_application} cannot be deleted as it does not exist'
+            flash(message, category='error')
 
     return redirect(url_for('application.all_applications'))
 

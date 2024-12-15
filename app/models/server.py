@@ -8,10 +8,10 @@ from app import db
 
 class Server (db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(6), unique= True)
+    name = db.Column(db.String(20), unique= True)
     cpu = db.Column(db.Integer)
     memory = db.Column(db.Integer)
-    location = db.Column(db.String(150))
+    location = db.Column(db.String(50))
     applications = db.relationship('Application')
 
     @staticmethod

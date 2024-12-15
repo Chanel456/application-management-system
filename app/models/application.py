@@ -36,12 +36,12 @@ class Application(db.Model):
     name = db.Column(db.String(150), unique = True)
     team_name = db.Column(db.String(150))
     team_email = db.Column(db.String(150))
-    url = db.Column(db.String(150), unique=True)
-    swagger = db.Column(db.String(150), nullable=True)
+    url = db.Column(db.String(200), unique=True)
+    swagger = db.Column(db.String(200), nullable=True)
     bitbucket = db.Column(db.String(200), unique = True)
-    extra_info = db.Column(db.Text(200), nullable = True)
+    extra_info = db.Column(db.Text(700), nullable = True)
     production_pods = db.Column(db.Integer)
-    server = db.Column(db.String(6), db.ForeignKey('server.name'))
+    server = db.Column(db.String(20), db.ForeignKey('server.name'))
 
     @staticmethod
     def find_application_by_id(id):
