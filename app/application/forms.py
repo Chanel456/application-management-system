@@ -66,7 +66,7 @@ class ApplicationForm(FlaskForm):
             raise ValidationError('Please select a server')
 
     def validate_bitbucket(self, field):
-        """Validates if bitbucket url starts with https://bitbucket.com and does not contradict to an existing one in the Application table"""
+        """Validates if bitbucket url starts with https://bitbucket.org and does not contradict to an existing one in the Application table"""
 
         retrieved_application = Application.find_application_by_bitbucket(field.data)
 
@@ -75,7 +75,7 @@ class ApplicationForm(FlaskForm):
         elif g.form_type == FormType.CREATE.value and retrieved_application:
             raise ValidationError('An application with this bitbucket already exists')
 
-        if not field.data.startswith('https://bitbucket.com') or not valid_package.url(field.data):
+        if not field.data.startswith('https://bitbucket.org') or not valid_package.url(field.data):
             raise ValidationError('Please enter a valid bitbucket url. Url should start with https://bitbucket.com')
 
     def validate_swagger(self, field):

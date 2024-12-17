@@ -11,7 +11,7 @@ def test_create(client, app, auth, init_server_table):
             response = client.post('/application/create',
                                    data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                                          'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
-                                         'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
+                                         'bitbucket': 'https://bitbucket.org/repo/exampleapp', 'extra_info': '',
                                          'production_pods': 3, 'server': 'aa-1234'})
             assert response.status_code == 200
             application = Application.query.filter_by(name='Example App').first()
@@ -25,7 +25,7 @@ def test_update(client, app, auth, init_server_table):
     client.post('/application/create',
                     data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
-                          'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
+                          'bitbucket': 'https://bitbucket.org/repo/exampleapp', 'extra_info': '',
                           'production_pods': 3, 'server': 'aa-1234'})
 
     with app.app_context():
@@ -37,7 +37,7 @@ def test_update(client, app, auth, init_server_table):
         response = client.post(f'/application/update?application_id={application.id}',
                             data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'newteamemail@gmail.com',
                                   'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
-                                  'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
+                                  'bitbucket': 'https://bitbucket.org/repo/exampleapp', 'extra_info': '',
                                   'production_pods': 3, 'server': 'aa-1234'})
         assert response.status_code == 200
         application = Application.query.filter_by(id=application.id).first()
@@ -52,7 +52,7 @@ def test_delete_admin_passes(client, app, auth, init_server_table):
     client.post('/application/create',
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
-                          'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
+                          'bitbucket': 'https://bitbucket.org/repo/exampleapp', 'extra_info': '',
                           'production_pods': 3, 'server': 'aa-1234'})
 
 
@@ -73,7 +73,7 @@ def test_delete_regular_fails(client, app, auth, init_server_table):
     client.post('/application/create',
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
-                          'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
+                          'bitbucket': 'https://bitbucket.org/repo/exampleapp', 'extra_info': '',
                           'production_pods': 3, 'server': 'aa-1234'})
 
 
@@ -118,7 +118,7 @@ def test_find_app_by_url_not_found(init_application_table):
     assert application is None
 
 def test_find_app_by_bitbucket_found(init_application_table):
-    application = Application.find_application_by_bitbucket('https://bitbucket.com/repos/apptwo')
+    application = Application.find_application_by_bitbucket('https://bitbucket.org/repos/apptwo')
     assert application is not None
     assert application.name == 'App Two'
     assert application.production_pods == 1

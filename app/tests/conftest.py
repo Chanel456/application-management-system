@@ -69,17 +69,17 @@ def init_application_table(app):
         application1 = Application(name='App One', team_name='Team One',
                                team_email='team.one@gmail.com', url='https://appone.com',
                                swagger='https://appone.com/swagger/ui',
-                               bitbucket='https://bitbucket.com/repos/appone', extra_info='',
+                               bitbucket='https://bitbucket.org/repos/appone', extra_info='',
                                production_pods=1, server='ab-0001')
         application2 = Application(name='App Two', team_name='Team Two',
                                team_email='team.two@gmail.com', url='https://apptwo.com',
                                swagger='',
-                               bitbucket='https://bitbucket.com/repos/apptwo', extra_info='This is an angular application',
+                               bitbucket='https://bitbucket.org/repos/apptwo', extra_info='This is an angular application',
                                production_pods=1, server='ab-0002')
         application3 = Application(name='App Three', team_name='Team Three',
                                team_email='team.three@gmail.com', url='https://appthree.com',
                                swagger='https://appthree.com/swagger/ui',
-                               bitbucket='https://bitbucket.com/appthree', extra_info='',
+                               bitbucket='https://bitbucket.org/appthree', extra_info='',
                                production_pods=1, server='ab-0003')
         db.session.add(application1)
         db.session.add(application2)

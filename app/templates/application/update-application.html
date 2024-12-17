@@ -14,10 +14,16 @@
         {{ render_field(form.team_name, class='form-control', placeholder='Development team') }}
         {{ render_field(form.team_email, class='form-control', placeholder='Development team email') }}
         {{ render_field(form.url, class='form-control', placeholder='Application Url')}}
+        {% if not form.url.errors %}
+        <div class="form-text n-mt-3 mb-2">Application URL should begin with http:// or https://</div>
+        {% endif %}
         {{ render_field(form.swagger, class='form-control', placeholder='Swagger') }}
+        {% if not form.swagger.errors %}
+        <div class="form-text n-mt-3 mb-2">Swagger URL should begin with http:// or https://</div>
+        {% endif %}
         {{ render_field(form.bitbucket, class='form-control', placeholder='Application bitbucket') }}
         {% if not form.bitbucket.errors %}
-        <div class="form-text n-mt-3 mb-2"> URL should begin with: https://bitbucket.com</div>
+        <div class="form-text n-mt-3 mb-2"> Bitbucket URL should begin with: https://bitbucket.org</div>
         {% endif %}
         {{ render_field(form.server, class='form-select', placeholder='Server') }}
         {{ render_field(form.production_pods, class='form-control', placeholder='Number of production pods') }}

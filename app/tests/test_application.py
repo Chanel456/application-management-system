@@ -32,7 +32,7 @@ def test_find_app_by_url_not_found(init_application_table):
     assert application is None
 
 def test_find_app_by_bitbucket_found(init_application_table):
-    application = Application.find_application_by_bitbucket('https://bitbucket.com/repos/apptwo')
+    application = Application.find_application_by_bitbucket('https://bitbucket.org/repos/apptwo')
     assert application is not None
     assert application.name == 'App Two'
     assert application.production_pods == 1

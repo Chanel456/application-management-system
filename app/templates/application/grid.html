@@ -34,9 +34,9 @@
                 <td>{{app.server}}</td>
                 <td>{{app.production_pods}}</td>
                 <td>
-                    <a href="{{url_for('application.update', application_id = app.id)}}"><i class="bi bi-pencil fs-4 mx-1"></i></a>
+                    <a href="{{url_for('application.update', application_id = app.id)}}" role="button" class="btn btn-outline-primary"><i class="bi bi-pencil"></i>Edit</a>
                     {% if user.is_admin %}
-                    <a href="/delete/{{app.id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteapplication{{app.id}}"><i class="bi bi-trash fs-4 text-danger mx-1"></i></a>
+                    <a href="/delete/{{app.id}}" data-bs-toggle="modal" data-bs-target="#modeldeleteapplication{{app.id}}" role="button" class="btn btn-outline-danger"><i class="bi bi-trash"></i>Delete</a>
                     {% endif %}
                 </td>
                 <td>{{app.team_email}}</td>
