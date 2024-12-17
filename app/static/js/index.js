@@ -139,11 +139,3 @@ function togglePassword(inputId, iconId) {
                 iconId.classList.add('bi-eye'); // Change back to show icon
             }
 }
-
-//Enable tooltips
-//var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-//var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-//    return new bootstrap.Tooltip(tooltipTriggerEl);
-//});
-
-document.addEventListener('DOMContentLoaded', function () { var tooltipTriggerList = [].slice.call(document.querySelectorAll('.tooltip-element')); var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) { return new bootstrap.Tooltip(tooltipTriggerEl); }); });
