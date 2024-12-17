@@ -192,7 +192,7 @@ def create_applications(*args, **kwargs):
         db.session.add(Application(name='Example App Seven', team_name='Team Seven',
                                    team_email='team.seven@gmail.com', url='https://exampleappseven.com',
                                    swagger='',
-                                   bitbucket='https://bitbucket.com/repos/exampleappseven', extra_info='This is an Angular application which uses Ngrx for state management',
+                                   bitbucket='https://bitbucket.org/repos/exampleappseven', extra_info='This is an Angular application which uses Ngrx for state management',
                                    production_pods=1, server='ab-0010'))
         db.session.add(Application(name='Example App Eight', team_name='Team Eight',
                                    team_email='team.eight@gmail.com', url='https://exampleappeight.com',
