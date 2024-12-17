@@ -8,7 +8,7 @@ from app import db
 
 class Server (db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20), unique= True)
+    name = db.Column(db.String(50), unique= True)
     cpu = db.Column(db.Integer)
     memory = db.Column(db.Integer)
     location = db.Column(db.String(50))
@@ -105,16 +105,16 @@ class Server (db.Model):
 def create_servers(*args, **kwargs):
     """Inserting 10 rows of data into server table on after database creation"""
     try:
-        db.session.add(Server(name='ab0001', cpu=123, memory=123, location='Walthamstow'))
-        db.session.add(Server(name='ab0002', cpu=234, memory=234, location='Harrow'))
-        db.session.add(Server(name='ab0003', cpu=345, memory=345, location='Walthamstow'))
-        db.session.add(Server(name='ab0004', cpu=456, memory=456, location='Walthamstow'))
-        db.session.add(Server(name='ab0005', cpu=567, memory=567, location='Harrow'))
-        db.session.add(Server(name='ab0006', cpu=678, memory=678, location='Walthamstow'))
-        db.session.add(Server(name='ab0007', cpu=789, memory=789, location='Walthamstow'))
-        db.session.add(Server(name='ab0008', cpu=890, memory=890, location='Harrow'))
-        db.session.add(Server(name='ab0009', cpu=901, memory=901, location='Walthamstow'))
-        db.session.add(Server(name='ab0010', cpu=184, memory=184, location='Walthamstow'))
+        db.session.add(Server(name='ab-0001', cpu=123, memory=123, location='Walthamstow'))
+        db.session.add(Server(name='ab-0002', cpu=234, memory=234, location='Harrow'))
+        db.session.add(Server(name='ab-0003', cpu=345, memory=345, location='Walthamstow'))
+        db.session.add(Server(name='ab-0004', cpu=456, memory=456, location='Walthamstow'))
+        db.session.add(Server(name='ab-0005', cpu=567, memory=567, location='Harrow'))
+        db.session.add(Server(name='ab-0006', cpu=678, memory=678, location='Walthamstow'))
+        db.session.add(Server(name='ab-0007', cpu=789, memory=789, location='Walthamstow'))
+        db.session.add(Server(name='ab-0008', cpu=890, memory=890, location='Harrow'))
+        db.session.add(Server(name='ab-0009', cpu=901, memory=901, location='Walthamstow'))
+        db.session.add(Server(name='ab-0010', cpu=184, memory=184, location='Walthamstow'))
         db.session.commit()
     except SQLAlchemyError as err:
         db.session.rollback()

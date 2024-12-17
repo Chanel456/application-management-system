@@ -1,6 +1,7 @@
 {% macro render_field(field) %}
+<!--Different rendering for Radio field as it is not compatible with floating labels-->
 {% if field.type == 'RadioField'%}
-  <dd>
+<dd>
     <dt>{{ field.label(class="required") }}</dt>
       {{ field(**kwargs)|safe }}
 
@@ -14,6 +15,36 @@
     {% endfor %}
     </ul>
   {% endif %}
+</dd>
+{% elif field.type == 'PasswordField' %}
+  <dd>
+    <div class="input-group mb-3">
+     <div class="form-floating">
+        {{ field(**kwargs)|safe }}
+      {% if field.name == 'login_password' %}
+        {{ field.label }}
+      {% else %}
+        {{ field.label(class="required") }}
+      {% endif %}
+     </div>
+       <button type="button" class="input-group-text" onclick="togglePassword({{ field.name }}, {{ field.name }}Toggle)">
+        <i id="{{ field.name }}Toggle" class="bi bi-eye"></i>
+      </button>
+      </div>
+      {% if field.errors %}
+    <ul class="list-unstyled n-mt-3">
+    {% for error in field.errors %}
+      <li class="text-danger">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        {{ error }}
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+
+
+
 </dd>
 {% else %}
   <dd>
@@ -30,11 +61,11 @@
         {{ field.label(class="required") }}
       {% endif %}
 
-      {% if field.name == 'password' or field.name =='login_password' or field.name == 'confirm_password' %}
-      <button type="button" class="toggle-password" onclick="togglePassword({{ field.name }}, {{ field.name }}Toggle)">
-        <i id="{{ field.name }}Toggle" class="bi bi-eye"></i>
-      </button>
-      {% endif %}
+<!--      {% if field.name == 'password' or field.name =='login_password' or field.name == 'confirm_password' %}-->
+<!--      <button type="button" class="toggle-password" onclick="togglePassword({{ field.name }}, {{ field.name }}Toggle)">-->
+<!--        <i id="{{ field.name }}Toggle" class="bi bi-eye"></i>-->
+<!--      </button>-->
+<!--      {% endif %}-->
       {% if field.errors %}
     <ul class="list-unstyled">
     {% for error in field.errors %}

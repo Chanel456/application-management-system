@@ -1,10 +1,7 @@
 import logging
 from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
-from sqlalchemy.exc import SQLAlchemyError
-from werkzeug.security import generate_password_hash
 
-from app import db
 from app.auth.forms import RegistrationForm, LoginForm
 from app.models.user import User
 from app.auth import auth
@@ -29,7 +26,7 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
-    """Logs out a user and redirects them to the login page"""
+    """Logout a user and redirect to the login page"""
     logging.info('User: %s successfully logged out', current_user.email)
     logout_user()
     return redirect(url_for('auth.login'))
@@ -38,24 +35,10 @@ def logout():
 def register():
     """Registers a user and allows them to access the web application"""
     form = RegistrationForm()
-    if request.method == 'POST':
-        user = User.find_user_by_email(form.email.data)
-        if user:
-            flash('An account with this email address already exists. Please login', category='error')
-        elif form.validate_on_submit():
-            is_admin = True if form.account_type.data == 'admin' else False
-            try:
-                new_user = User(email=form.email.data, first_name=form.first_name.data, last_name=form.last_name.data,
-                                password=generate_password_hash(form.password.data, method='scrypt'), is_admin=is_admin)
-                db.session.add(new_user)
-                db.session.commit()
-            except SQLAlchemyError as err:
-                db.session.rollback()
-                logging.error('Unable to register user: %s', form.email.data)
-                logging.error(err)
-                flash('Unable to register user', category='error')
-            else:
-                logging.info('%s account created successfully', form.email.data)
-                flash('Account created successfully!', category='success')
-                return redirect(url_for('auth.login'))
+    if request.method == 'POST' and form.validate_on_submit():
+        is_admin = True if form.account_type.data == 'admin' else False
+        User.add_user(form.email.data, form.first_name.data, form.last_name.data,
+                                form.password.data,is_admin)
+        return redirect(url_for('auth.login'))
+
     return render_template('auth/register.html', user=current_user, form=form)

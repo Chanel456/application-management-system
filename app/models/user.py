@@ -1,5 +1,8 @@
+import logging
+
+from flask import flash
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.testing.plugin.plugin_base import logging
+from werkzeug.security import generate_password_hash
 
 from app import db
 from flask_login import UserMixin
@@ -36,3 +39,20 @@ class User(db.Model, UserMixin):
         except SQLAlchemyError as err:
             logging.error('An error was encountered whilst filtering the User table by email: %s', email)
             logging.error(err)
+
+    @staticmethod
+    def add_user(email, first_name, last_name, password, is_admin):
+        try:
+            new_user = User(email=email, first_name=first_name, last_name=last_name,
+                            password=generate_password_hash(password, method='scrypt'), is_admin=is_admin)
+            db.session.add(new_user)
+            db.session.commit()
+        except SQLAlchemyError as err:
+            db.session.rollback()
+            logging.error('Unable to register user: %s', email)
+            logging.error(err)
+            flash('Unable to register user', category='error')
+        else:
+            logging.info('%s account created successfully', email)
+            flash('Account created successfully!', category='success')
+

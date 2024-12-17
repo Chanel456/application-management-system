@@ -24,7 +24,7 @@
     user-select: none;
  }
 
-/* Style for password toggle button */
+/* Style for password toggle button
 .password-container {
     position: relative;
 }
@@ -43,4 +43,4 @@
 .toggle-password i {
     font-size: 1.2rem;
     color: #6c757d; /* Gray color for icon */
-}
+*/

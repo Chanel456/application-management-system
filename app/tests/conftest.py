@@ -70,17 +70,17 @@ def init_application_table(app):
                                team_email='team.one@gmail.com', url='https://appone.com',
                                swagger='https://appone.com/swagger/ui',
                                bitbucket='https://bitbucket.com/repos/appone', extra_info='',
-                               production_pods=1, server='ab0001')
+                               production_pods=1, server='ab-0001')
         application2 = Application(name='App Two', team_name='Team Two',
                                team_email='team.two@gmail.com', url='https://apptwo.com',
                                swagger='',
                                bitbucket='https://bitbucket.com/repos/apptwo', extra_info='This is an angular application',
-                               production_pods=1, server='ab0002')
+                               production_pods=1, server='ab-0002')
         application3 = Application(name='App Three', team_name='Team Three',
                                team_email='team.three@gmail.com', url='https://appthree.com',
                                swagger='https://appthree.com/swagger/ui',
                                bitbucket='https://bitbucket.com/appthree', extra_info='',
-                               production_pods=1, server='ab0003')
+                               production_pods=1, server='ab-0003')
         db.session.add(application1)
         db.session.add(application2)
         db.session.add(application3)
@@ -90,9 +90,9 @@ def init_application_table(app):
 @pytest.fixture
 def init_server_table(app):
     with app.app_context():
-        server1 = Server(name='aa1234', cpu=123, memory=123, location='Walthamstow')
-        server2 = Server(name='aa2345', cpu=456, memory=456, location='Harrow')
-        server3 = Server(name='aa3456', cpu=789, memory=789, location='Surrey')
+        server1 = Server(name='aa-1234', cpu=123, memory=123, location='Walthamstow')
+        server2 = Server(name='aa-2345', cpu=456, memory=456, location='Harrow')
+        server3 = Server(name='aa-3456', cpu=789, memory=789, location='Surrey')
         db.session.add(server1)
         db.session.add(server2)
         db.session.add(server3)

@@ -9,7 +9,7 @@ def test_create(client, app, auth):
     with client:
         with app.app_context():
             response = client.post('/server/create',
-                                        data={'name': 'io9877', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
+                                        data={'name': 'io-9877', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
             assert response.status_code == 200
             server = Server.query.filter_by(name='io9877').first()
             assert server is not None
@@ -20,7 +20,7 @@ def test_update(client, app, auth):
     auth.login('test@gmail.com', '#Password12345')
 
     client.post('/server/create',
-                data={'name': 'io9877', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
+                data={'name': 'io-9877', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
 
     with app.app_context():
         server = Server.query.filter_by(name='io9877').first()
@@ -28,7 +28,7 @@ def test_update(client, app, auth):
 
     with client:
         response = client.post(f'server/update?server_id={server.id}',
-                               data={'name': 'io9877', 'cpu': 967, 'memory': 123, 'location': 'Nottingham'})
+                               data={'name': 'io-9877', 'cpu': 967, 'memory': 123, 'location': 'Nottingham'})
         assert response.status_code == 200
         server = Server.query.filter_by(name='io9877').first()
         assert server.cpu == 967
@@ -40,7 +40,7 @@ def test_delete_admin_passes(client, app, auth):
     auth.login('test@gmail.com', '#Password12345')
 
     client.post('/server/create',
-                data={'name': 'io9877', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
+                data={'name': 'io-9877', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
 
 
     with app.app_context():
@@ -58,7 +58,7 @@ def test_delete_regular_fails(client, app, auth):
     auth.login('test@gmail.com', '#Password12345')
 
     client.post('/server/create',
-                data={'name': 'io9877', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
+                data={'name': 'io-9877', 'cpu': 123, 'memory': 123, 'location': 'Nottingham'})
 
 
     with app.app_context():

@@ -33,8 +33,14 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', [DataRequired(), validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_+])[A-Za-z\d!@#$%^&*_+]{7,20}$', message='Password must contain at least 1 uppercase letter, 1 number,  1 special character (!@#$%^&*_+) and be 7 to 20 characters long'), validators.Length(min=7, max=20, message='Password cannot exceed 20 characters'), validators.EqualTo('confirm_password', message='Passwords must match')])
     confirm_password = PasswordField('Confirm Password', [DataRequired(), validators.Length(min=7, max=20), validators.EqualTo('password', message='Passwords must match')])
 
+
     def validate_email(self, field):
-        """Checks if the email address is valid using the validators package"""
+        """Checks if the email address is valid using the validators package and if there is already an account with the same email address"""
+        user = User.find_user_by_email(field.data)
+
+        if user:
+            raise ValidationError('An account with this email address already exists. Please login')
+
         if not valid_package.email(field.data):
             raise ValidationError('Please enter a valid email')
 

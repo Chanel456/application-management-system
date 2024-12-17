@@ -12,7 +12,7 @@ def test_create(client, app, auth, init_server_table):
                                    data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                                          'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                                          'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                                         'production_pods': 3, 'server': 'aa1234'})
+                                         'production_pods': 3, 'server': 'aa-1234'})
             assert response.status_code == 200
             application = Application.query.filter_by(name='Example App').first()
             assert application is not None
@@ -26,7 +26,7 @@ def test_update(client, app, auth, init_server_table):
                     data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                           'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                          'production_pods': 3, 'server': 'aa1234'})
+                          'production_pods': 3, 'server': 'aa-1234'})
 
     with app.app_context():
         application = Application.query.filter_by(name='Example App').first()
@@ -38,7 +38,7 @@ def test_update(client, app, auth, init_server_table):
                             data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'newteamemail@gmail.com',
                                   'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                                   'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                                  'production_pods': 3, 'server': 'aa1234'})
+                                  'production_pods': 3, 'server': 'aa-1234'})
         assert response.status_code == 200
         application = Application.query.filter_by(id=application.id).first()
         assert application.team_email == 'newteamemail@gmail.com'
@@ -53,7 +53,7 @@ def test_delete_admin_passes(client, app, auth, init_server_table):
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                           'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                          'production_pods': 3, 'server': 'aa1234'})
+                          'production_pods': 3, 'server': 'aa-1234'})
 
 
     with app.app_context():
@@ -74,7 +74,7 @@ def test_delete_regular_fails(client, app, auth, init_server_table):
                 data={'name': 'Example App', 'team_name': 'Team', 'team_email': 'team@gmail.com',
                           'url': 'https://exampleapp.com', 'swagger': 'https://exampleapp.com/swagger',
                           'bitbucket': 'https://bitbucket.com/repo/exampleapp', 'extra_info': '',
-                          'production_pods': 3, 'server': 'aa1234'})
+                          'production_pods': 3, 'server': 'aa-1234'})
 
 
     with app.app_context():

@@ -38,9 +38,8 @@ def update():
     # If form is valid update server information
     if request.method == 'POST' and  form.validate_on_submit():
         updated_server = form.data
+        # Remove csrf_token form object
         updated_server.pop('csrf_token', None)
-        print('Prod pods')
-        print(updated_server.production_pods)
         if retrieved_server:
             Server.update_server(server_id, updated_server)
         else:

@@ -39,7 +39,7 @@ class ApplicationForm(FlaskForm):
     team_name = StringField('Development team', [DataRequired(), validators.Length(min=2, max=50, message='Development team name must be between 2 and 150 characters'), validators.Regexp('^[a-zA-Z- ]+$', message='Team name must only contain alphabetic characters hyphens')])
     team_email = EmailField('Development team email', [DataRequired(), validators.length(max=150, message='Development team email cannot exceed 150 characters')])
     url = URLField('Application URL', [DataRequired(), validators.Length(max=200, message='URL cannot exceed 150 characters')])
-    swagger = URLField('Swagger URL', [validators.Length(max=200, message='Swagger URL cannot exceed 200 characters')])
+    swagger = URLField('Swagger URL', [validators.Optional(), validators.Length(max=200, message='Swagger URL cannot exceed 200 characters')])
     bitbucket = URLField('Bitbucket URL', [DataRequired(), validators.Length(max=200, message='Bitbucket URL cannot exceed 200 characters')])
     extra_info = TextAreaField('Extra information', [validators.Length(max=1000, message='Extra Information cannot exceed 1000 characters')])
     production_pods = IntegerField('Number of production pods', [NumberRange(min=0)])
@@ -66,7 +66,7 @@ class ApplicationForm(FlaskForm):
             raise ValidationError('Please select a server')
 
     def validate_bitbucket(self, field):
-        """Validates if bitbucket url starts with https://bitbucket.com and the bitbucket url is not the same as one already in the database"""
+        """Validates if bitbucket url starts with https://bitbucket.com and does not contradict to an existing one in the Application table"""
 
         retrieved_application = Application.find_application_by_bitbucket(field.data)
 
@@ -79,12 +79,20 @@ class ApplicationForm(FlaskForm):
             raise ValidationError('Please enter a valid bitbucket url. Url should start with https://bitbucket.com')
 
     def validate_swagger(self, field):
-        """Checks if a valid url was entered for swagger"""
+        """Checks if a valid url was entered for swagger and does not contradict to an existing one in the Application table"""
+
+        retrieved_application = Application.find_application_by_swagger(field.data)
+
+        if g.form_type == FormType.UPDATE.value and retrieved_application and retrieved_application.id != g.application_id:
+            raise ValidationError('An application with this swagger already exists')
+        elif g.form_type == FormType.CREATE.value and retrieved_application:
+            raise ValidationError('An application with this swagger already exists')
+
         if not valid_package.url(field.data):
             raise ValidationError('Please enter a valid URL')
 
     def validate_url(self, field):
-        """Checks if a valid url was entered for the application url and the url is not the same as one already in the databse"""
+        """Checks if a valid url was entered for the application url and does not contradict to an existing one in the Application table"""
         retrieved_application = Application.find_application_by_url(field.data)
 
         if g.form_type == FormType.UPDATE.value and retrieved_application and retrieved_application.id != g.application_id:
@@ -96,6 +104,7 @@ class ApplicationForm(FlaskForm):
             raise ValidationError('Please enter a valid URL')
 
     def validate_production_pods(self, field):
+        """Checks if a valid integer greater than or equal to 0 was entered for the production_pods field"""
         try:
             isinstance(field.data, int) and field.data >= 0
         except (TypeError, ValueError):
