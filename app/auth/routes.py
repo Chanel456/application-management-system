@@ -14,7 +14,7 @@ def login():
     """Logs in a user to the application based on the credentials submitted in the form"""
     form = LoginForm()
     if request.method == 'POST':
-        user = find_user_by_email(form.login_email.data)
+        user = User.find_user_by_email(form.login_email.data)
         if user:
             if form.validate_on_submit():
                    login_user(user, remember = True)
@@ -39,7 +39,7 @@ def register():
     """Registers a user and allows them to access the web application"""
     form = RegistrationForm()
     if request.method == 'POST':
-        user = find_user_by_email(form.email.data)
+        user = User.find_user_by_email(form.email.data)
         if user:
             flash('An account with this email address already exists. Please login', category='error')
         elif form.validate_on_submit():
@@ -59,12 +59,3 @@ def register():
                 flash('Account created successfully!', category='success')
                 return redirect(url_for('auth.login'))
     return render_template('auth/register.html', user=current_user, form=form)
-
-def find_user_by_email(email):
-    """Searched for a user in the database filtering by email address"""
-    try:
-        return User.query.filter_by(email=email).first()
-    except SQLAlchemyError as err:
-        db.session.rollback()
-        logging.error('Error occurred whilst querying the database')
-        logging.error(err)

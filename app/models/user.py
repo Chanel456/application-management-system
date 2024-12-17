@@ -22,13 +22,14 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key = True)
     email = db.Column(db.String(150), unique = True)
-    password = db.Column(db.String(150))
+    password = db.Column(db.String(20))
     first_name = db.Column(db.String(150))
     last_name = db.Column(db.String(150))
     is_admin = db.Column(db.Boolean)
 
     @staticmethod
     def find_user_by_email(email):
+        """Finds a user in the User table by their email address"""
         try:
             user = User.query.filter_by(email=email).first()
             return user

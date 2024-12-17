@@ -1,8 +1,12 @@
 import validators as valid_package
+from flask import g
 
 from flask_wtf import FlaskForm
 from wtforms import validators, StringField, EmailField, URLField, TextAreaField, IntegerField, SelectField
 from wtforms.validators import DataRequired, ValidationError, NumberRange
+
+from app.models.application import Application
+from app.shared.shared import FormType
 
 
 class ApplicationForm(FlaskForm):
@@ -37,9 +41,19 @@ class ApplicationForm(FlaskForm):
     url = URLField('Application URL', [DataRequired(), validators.Length(max=200, message='URL cannot exceed 150 characters')])
     swagger = URLField('Swagger URL', [validators.Length(max=200, message='Swagger URL cannot exceed 200 characters')])
     bitbucket = URLField('Bitbucket URL', [DataRequired(), validators.Length(max=200, message='Bitbucket URL cannot exceed 200 characters')])
-    extra_info = TextAreaField('Extra information', [validators.Length(max=700, message='Extra Information cannot exceed 700 characters')])
-    production_pods = IntegerField('Number of production pods', [DataRequired(), NumberRange(min=0)])
+    extra_info = TextAreaField('Extra information', [validators.Length(max=1000, message='Extra Information cannot exceed 1000 characters')])
+    production_pods = IntegerField('Number of production pods', [NumberRange(min=0)])
     server = SelectField('Server', [DataRequired()], coerce=str)
+
+    def validate_name(self, field):
+        """Checks if there is an application with the same name already in the Application table"""
+        retrieved_application = Application.find_application_by_name(field.data)
+
+        if g.form_type == FormType.UPDATE.value and retrieved_application and  retrieved_application.id != g.application_id:
+            raise ValidationError('An application with this name already exists')
+        elif g.form_type == FormType.CREATE.value and retrieved_application:
+            raise ValidationError('An application with this name already exists')
+
 
     def validate_team_email(self, field):
         """Checks if the email address is valid using the validators package"""
@@ -52,16 +66,37 @@ class ApplicationForm(FlaskForm):
             raise ValidationError('Please select a server')
 
     def validate_bitbucket(self, field):
-        """Validates if bitbucket url starts with https://bitbucket.com"""
+        """Validates if bitbucket url starts with https://bitbucket.com and the bitbucket url is not the same as one already in the database"""
+
+        retrieved_application = Application.find_application_by_bitbucket(field.data)
+
+        if g.form_type == FormType.UPDATE.value and retrieved_application and retrieved_application.id != g.application_id:
+            raise ValidationError('An application with this bitbucket already exists')
+        elif g.form_type == FormType.CREATE.value and retrieved_application:
+            raise ValidationError('An application with this bitbucket already exists')
+
         if not field.data.startswith('https://bitbucket.com') or not valid_package.url(field.data):
             raise ValidationError('Please enter a valid bitbucket url. Url should start with https://bitbucket.com')
 
     def validate_swagger(self, field):
         """Checks if a valid url was entered for swagger"""
         if not valid_package.url(field.data):
-            raise ValidationError('Please enter a valid url')
+            raise ValidationError('Please enter a valid URL')
 
     def validate_url(self, field):
-        """Checks if a valid url was entered for the application url"""
+        """Checks if a valid url was entered for the application url and the url is not the same as one already in the databse"""
+        retrieved_application = Application.find_application_by_url(field.data)
+
+        if g.form_type == FormType.UPDATE.value and retrieved_application and retrieved_application.id != g.application_id:
+            raise ValidationError('An application with this URL already exists')
+        elif g.form_type == FormType.CREATE.value and retrieved_application:
+            raise ValidationError('An application with this URL already exists')
+
         if not valid_package.url(field.data):
-            raise ValidationError('Please enter a valid url')
+            raise ValidationError('Please enter a valid URL')
+
+    def validate_production_pods(self, field):
+        try:
+            isinstance(field.data, int) and field.data >= 0
+        except (TypeError, ValueError):
+            raise ValidationError('Please enter a valid integer greater than 0.')

@@ -19,14 +19,21 @@
   <dd>
     <div class="form-floating mb-3">
       {{ field(**kwargs)|safe }}
+
       {% if field.type == 'TextAreaField' %}
-      <div id="charCount" class="char-counter">700 characters remaining</div>
+      <div id="charCount" class="char-counter"></div>
       {% endif %}
 
       {% if field.name == 'extra_info' or field.name == 'swagger' or field.name == 'login_email' or field.name == 'login_password' %}
         {{ field.label }}
       {% else %}
         {{ field.label(class="required") }}
+      {% endif %}
+
+      {% if field.name == 'password' or field.name =='login_password' or field.name == 'confirm_password' %}
+      <button type="button" class="toggle-password" onclick="togglePassword({{ field.name }}, {{ field.name }}Toggle)">
+        <i id="{{ field.name }}Toggle" class="bi bi-eye"></i>
+      </button>
       {% endif %}
       {% if field.errors %}
     <ul class="list-unstyled">

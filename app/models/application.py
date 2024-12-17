@@ -39,7 +39,7 @@ class Application(db.Model):
     url = db.Column(db.String(200), unique=True)
     swagger = db.Column(db.String(200), nullable=True)
     bitbucket = db.Column(db.String(200), unique = True)
-    extra_info = db.Column(db.Text(700), nullable = True)
+    extra_info = db.Column(db.Text(1000), nullable = True)
     production_pods = db.Column(db.Integer)
     server = db.Column(db.String(20), db.ForeignKey('server.name'))
 

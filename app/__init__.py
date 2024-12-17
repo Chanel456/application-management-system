@@ -1,5 +1,4 @@
 import logging
-from http.client import HTTPException
 
 from flask import Flask, render_template, url_for
 from flask_login import LoginManager, current_user

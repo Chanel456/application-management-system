@@ -7,16 +7,16 @@ from app.auth.forms import LoginForm, RegistrationForm
 def test_password_validator_passes(init_user_table, app):
     with app.app_context():
         with app.test_request_context():
-            form = LoginForm(data={'email': 'test.user1@gmail.com', 'password': '#Password12345'})
-            form.validate_password(form.password)
-            assert len(form.password.errors) == 0
+            form = LoginForm(data={'login_email': 'test.user1@gmail.com', 'login_password': '#Password12345'})
+            form.validate_login_password(form.login_password)
+            assert len(form.login_password.errors) == 0
 
 def test_password_validator_fails(init_user_table, app):
     with app.app_context():
         with app.test_request_context():
-            form = LoginForm(data = {'email': 'test.user1@gmail.com', 'password': '#Incorr£TPa$$word'})
+            form = LoginForm(data = {'login_email': 'test.user1@gmail.com', 'login_password': '#Incorr£TPa$$word'})
             with pytest.raises(ValidationError):
-                form.validate_password(form.password)
+                form.validate_login_password(form.login_password)
 
 def test_email_validator_passes(app):
     with app.app_context():
@@ -49,11 +49,11 @@ def test_registration_form_validation_fails(app):
 def test_login_form_validation_passes(app, init_user_table):
     with app.app_context():
         with app.test_request_context():
-            form = LoginForm(data={'email': 'test.user1@gmail.com', 'password': '#Password12345'})
+            form = LoginForm(data={'login_email': 'test.user1@gmail.com', 'login_password': '#Password12345'})
             assert form.validate() == True
 
 def test_login_form_validation_fails(app, init_user_table):
     with app.app_context():
         with app.test_request_context():
-            form = LoginForm(data={'email': '', 'password': '#Password12345'})
+            form = LoginForm(data={'login_email': '', 'login_password': '#Password12345'})
             assert form.validate() == False

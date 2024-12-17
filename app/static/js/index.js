@@ -115,6 +115,27 @@ const textarea = document.getElementById('extra_info');
 const charCount = document.getElementById('charCount');
 const maxLength = textarea.getAttribute('maxlength');
 
-textarea.addEventListener('input', () => {
+// Function to update character count of text area
+const updateCharCount = () => {
     const remaining = maxLength - textarea.value.length; charCount.textContent = `${remaining} characters remaining`;
-});
+}
+
+// Update char count on page load
+updateCharCount();
+
+// Listener to update character count on input
+textarea.addEventListener('input', updateCharCount);
+
+
+function togglePassword(inputId, iconId) {
+// This function toggle password input fields between type text and password
+            if (inputId.type === 'password') {
+                inputId.type = 'text'; // Show password
+                iconId.classList.remove('bi-eye');
+                iconId.classList.add('bi-eye-slash'); // Change to hide icon
+            } else {
+                inputId.type = 'password'; // Hide password
+                iconId.classList.remove('bi-eye-slash');
+                iconId.classList.add('bi-eye'); // Change back to show icon
+            }
+}

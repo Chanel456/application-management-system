@@ -37,7 +37,7 @@ class AuthActions(object):
     def login(self, email, password):
         return self._client.post(
            '/auth/login',
-            data={'email': email, 'password': password},
+            data={'login_email': email, 'login_password': password},
             follow_redirects = True
         )
 

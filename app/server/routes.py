@@ -1,9 +1,10 @@
-from flask import render_template, flash, request, url_for, redirect
+from flask import render_template, flash, request, url_for, redirect, g
 from flask_login import login_required, current_user
 
 from app.models.server import Server
 from app.server import server
 from app.server.forms import ServerForm
+from app.shared.shared import FormType
 
 
 @server.route('/create', methods=['GET', 'POST'])
@@ -11,15 +12,12 @@ from app.server.forms import ServerForm
 def create():
     """Creates a server in the database using the information entered by the form"""
     form = ServerForm()
-    if request.method == 'POST':
-        retrieved_server = Server.find_server_by_name(form.name.data)
 
-        # Checking if server already exists in database with the same name
-        if retrieved_server:
-            flash('A server with this name already exists within the system', category='error')
+    # Assigning global variables to be used in custom form validation functions
+    g.form_type = FormType.CREATE.value
 
-        # If the create form is valid add server to database
-        elif form.validate_on_submit():
+    # If the create form is valid add server to database
+    if request.method == 'POST' and form.validate_on_submit():
             Server.create_server(form.name.data, form.cpu.data, form.memory.data, form.location.data)
 
     return render_template('server/add-server.html', user=current_user, form=form)
@@ -33,22 +31,21 @@ def update():
     retrieved_server = Server.find_server_by_id(server_id)
     form = ServerForm(obj=retrieved_server)
 
-    if request.method == 'POST':
-        retrieved_server_by_name = Server.find_server_by_name(form.name.data)
+    # Assigning global variables to be used in custom form validation functions
+    g.form_type = FormType.UPDATE.value
+    g.server_id = int(server_id)
 
-        # Checks if the updated server name conflicts with an existing entry in the database
-        if retrieved_server_by_name and retrieved_server_by_name.id != retrieved_server.id:
-            flash('There is a server with the same name already in the system', category='error')
-
-        # If form is valid update server information
-        elif form.validate_on_submit():
-            updated_server = form.data
-            updated_server.pop('csrf_token', None)
-            if retrieved_server:
-                Server.update_server(server_id, updated_server)
-            else:
-                message = f'Server {retrieved_server.name} cannot be updated as they do not exist'
-                flash(message, category='error', )
+    # If form is valid update server information
+    if request.method == 'POST' and  form.validate_on_submit():
+        updated_server = form.data
+        updated_server.pop('csrf_token', None)
+        print('Prod pods')
+        print(updated_server.production_pods)
+        if retrieved_server:
+            Server.update_server(server_id, updated_server)
+        else:
+            message = f'Server {retrieved_server.name} cannot be updated as they do not exist'
+            flash(message, category='error', )
 
     return render_template('server/update-server.html', user=current_user, form=form, server = retrieved_server)
 

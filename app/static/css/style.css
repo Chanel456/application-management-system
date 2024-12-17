@@ -6,3 +6,41 @@
     font-size: 0.9em;
     color: #6c757d;
 }
+
+.n-mt-3 {
+    margin-top: -0.75rem !important;
+}
+
+ /* Remove browser's default password toggle */
+ input[type="password"]::-ms-reveal,
+ input[type="password"]::-ms-clear {
+       display: none;
+ }
+
+ input[type="password"]::-webkit-contacts-auto-fill-button,
+ input[type="password"]::-webkit-password-toggle-button {
+    display: none;
+    pointer-events: none;
+    user-select: none;
+ }
+
+/* Style for password toggle button */
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+    z-index: 10;
+    }
+
+.toggle-password i {
+    font-size: 1.2rem;
+    color: #6c757d; /* Gray color for icon */
+}

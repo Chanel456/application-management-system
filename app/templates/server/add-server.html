@@ -10,6 +10,9 @@
     {{ form.hidden_tag() }}
     <dl>
         {{ render_field(form.name, class='form-control mt-4', placeholder='Name') }}
+        {% if not form.name.errors %}
+        <div class="form-text n-mt-3 mb-2"> Name should contain 2 lowercase letters followed by 4 numbers ie. ab1234 </div>
+        {% endif %}
         {{ render_field(form.cpu, class='form-control', placeholder='CPU') }}
         {{ render_field(form.memory, class='form-control', placeholder='Memory') }}
         {{ render_field(form.location, class='form-control', placeholder='Location') }}
