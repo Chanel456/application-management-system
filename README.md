@@ -1,4 +1,4 @@
-# application-management-system
+# asset-management-system
 
 This system provides a central place where employees can register department servers and applications
 
