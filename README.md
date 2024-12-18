@@ -1,5 +1,7 @@
 # application-management-system
 
+This system provides a central place where employees can register department servers and applications
+
 ### Software you should have installed on your machine
 
 - Pip 

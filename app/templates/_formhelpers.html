@@ -16,6 +16,7 @@
     </ul>
   {% endif %}
 </dd>
+<!--Different rendering for PasswordField to enable custom toggling-->
 {% elif field.type == 'PasswordField' %}
   <dd>
     <div class="input-group mb-3">
@@ -41,11 +42,19 @@
     {% endfor %}
     </ul>
   {% endif %}
-
-
-
-
+      {% if field.name == 'password' %}
+      <div class="form-text n-mt-3">
+          Your password must be 7 - 20 characters long and contain at least:
+          <ul>
+              <li>One uppercase letter</li>
+              <li>One lowercase letter</li>
+              <li>One number </li>
+              <li>One special character (!@#$%^&*_+)</li>
+          </ul>
+      </div>
+      {% endif %}
 </dd>
+<!--Render fields for all other input types-->
 {% else %}
   <dd>
     <div class="form-floating mb-3">
@@ -55,17 +64,11 @@
       <div id="charCount" class="char-counter"></div>
       {% endif %}
 
-      {% if field.name == 'extra_info' or field.name == 'swagger' or field.name == 'login_email' or field.name == 'login_password' %}
+      {% if field.name == 'extra_info' or field.name == 'swagger' or field.name == 'login_email'%}
         {{ field.label }}
       {% else %}
         {{ field.label(class="required") }}
       {% endif %}
-
-<!--      {% if field.name == 'password' or field.name =='login_password' or field.name == 'confirm_password' %}-->
-<!--      <button type="button" class="toggle-password" onclick="togglePassword({{ field.name }}, {{ field.name }}Toggle)">-->
-<!--        <i id="{{ field.name }}Toggle" class="bi bi-eye"></i>-->
-<!--      </button>-->
-<!--      {% endif %}-->
       {% if field.errors %}
     <ul class="list-unstyled">
     {% for error in field.errors %}

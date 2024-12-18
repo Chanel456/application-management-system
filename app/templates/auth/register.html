@@ -19,17 +19,17 @@
                           {{ render_field(form.last_name, class='form-control', placeholder='Last name') }}
                           {{ render_field(form.password, class='form-control mb-n3', placeholder='Password') }}
 
-                          {% if not form.password.errors %}
-                          <div class="form-text n-mt-3">
-                              Your password must be 7 - 20 characters long and contain at least:
-                              <ul>
-                                  <li>One uppercase letter</li>
-                                  <li>One lowercase letter</li>
-                                  <li>One number </li>
-                                  <li>One special character (!@#$%^&*_+)</li>
-                              </ul>
-                          </div>
-                          {% endif %}
+<!--                          {% if not form.password.errors %}-->
+<!--                          <div class="form-text n-mt-3">-->
+<!--                              Your password must be 7 - 20 characters long and contain at least:-->
+<!--                              <ul>-->
+<!--                                  <li>One uppercase letter</li>-->
+<!--                                  <li>One lowercase letter</li>-->
+<!--                                  <li>One number </li>-->
+<!--                                  <li>One special character (!@#$%^&*_+)</li>-->
+<!--                              </ul>-->
+<!--                          </div>-->
+<!--                          {% endif %}-->
 
                           {{ render_field(form.confirm_password, class='form-control', placeholder='Confirm password') }}
                       </dl>

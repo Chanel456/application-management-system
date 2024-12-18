@@ -13,16 +13,16 @@ function format ( d ) {
             `<td><a href="mailto:${d[6]}">${d[6]}</a></td>` +
         '</tr>'+
         '<tr>'+
-            '<td>Application Url:</td>'+
+            '<td>Application URL:</td>'+
             `<td><a href="${d[7]}" target="_blank">${d[7]}</a></td>` +
         '</tr>'+
         ( d[8] !== '' ?
         '<tr>'+
-            '<td>Swagger:</td>'+
+            '<td>Swagger URL:</td>'+
             `<td><a href="${d[8]}" target="_blank">${d[8]}</a></td>` +
         '</tr>' : '')
         + '<tr>'+
-            '<td>Bitbucket:</td>'+
+            '<td>Bitbucket URL:</td>'+
             `<td><a href="${d[9]}" target="_blank">${d[9]}</a></td>` +
         '</tr>'+
         ( d[10] !== '' ?
@@ -60,7 +60,8 @@ function format ( d ) {
                   exportOptions: {
                       columns: [1,2,3,4, 6, 7, 8, 9, 10]
                   },
-                  title:'Asset Management System - Applications'
+                  title:'Asset Management System - Applications',
+                  text: 'Export to Excel'
                 },
             ]
 
@@ -102,7 +103,8 @@ var table2 = $('#serverTable').DataTable({
                         exportOptions: {
                             columns: [0,1,2,3]
                         },
-                        title:'Asset Management System - Servers'
+                        title:'Asset Management System - Servers',
+                        text: 'Export to Excel'
                     }
                 ]
             },

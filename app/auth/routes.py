@@ -9,6 +9,11 @@ from app.auth import auth
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     """Logs in a user to the application based on the credentials submitted in the form"""
+
+    # redirects the user to the dashboard if they are already logged in
+    if current_user.is_authenticated:
+        return redirect(url_for('views.dashboard'))
+
     form = LoginForm()
     if request.method == 'POST':
         user = User.find_user_by_email(form.login_email.data)
@@ -34,6 +39,11 @@ def logout():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     """Registers a user and allows them to access the web application"""
+
+    # redirects the user to the dashboard if they are already logged in
+    if current_user.is_authenticated:
+        return redirect(url_for('views.dashboard'))
+
     form = RegistrationForm()
     if request.method == 'POST' and form.validate_on_submit():
         is_admin = True if form.account_type.data == 'admin' else False
