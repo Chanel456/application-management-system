@@ -2,6 +2,7 @@ import pytest
 from flask import g
 from wtforms.validators import ValidationError
 
+from app.application.form_errors import ApplicationFormError
 from app.application.forms import ApplicationForm
 from app.models.server import Server
 from app.shared.shared import FormType
@@ -31,8 +32,8 @@ def test_server_form_invalid_input_validation_fails(app):
             form = ApplicationForm(data = {'name': '1234567', 'team_name': '431689708', 'team_email': 'teamone@gmail.com', 'url': 'https://exampleappone.com', 'swagger': 'https://exampleappone.com/swagger/ui', 'bitbucket': 'https://bitbucket.org/repos/exampleappone', 'extra_info': '', 'production_pods': 2, 'server': 'aa-1234'})
             form.server.choices = [(s.name, s.name) for s in Server.query.with_entities(Server.name)]
             assert form.validate() == False
-            assert form.errors.get('name')[0] == 'Application name must only contain alphabetic characters and hyphens'
-            assert form.errors.get('team_name')[0] == 'Team name must only contain alphabetic characters hyphens'
+            assert form.errors.get('name')[0] == ApplicationFormError.INVALID_NAME_FORMAT.value
+            assert form.errors.get('team_name')[0] == ApplicationFormError.INVALID_TEAM_NAME_FORMAT.value
 
 def test_email_validator_passes(app):
     with app.app_context():

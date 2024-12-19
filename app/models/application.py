@@ -12,35 +12,35 @@ class Application(db.Model):
 
         Columns
         -------------------
-        id: integer
+        id: Integer
             application id
-        name: string
+        name: VARCHAR(150)
             name of the application
-        team_name: string
+        team_name: VARCHAR(150)
             Name of the team who is responsible for maintaining the application
-        team_email: boolean
+        team_email: VARCHAR(150)
             Email address of the team responsible for maintaining the application
-        url: string
+        url: VARCHAR(150)
             Url for the application
-        bitbucket: string
+        bitbucket: VARCHAR(150)
             url for the bitbucket repo for the application
-        extra_info: text
+        extra_info: VARCHAR(1000)
             Any extra information about the application
-        production_pods: integer
+        production_pods: Integer
             the number of pods this application has up in production
-        server: string
+        server: VARCHAR(50)
             The server the application is deployed on
         """
 
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(150), unique = True)
-    team_name = db.Column(db.String(150))
-    team_email = db.Column(db.String(150))
-    url = db.Column(db.String(200), unique=True)
+    name = db.Column(db.String(150), unique = True, nullable=False)
+    team_name = db.Column(db.String(150), nullable=False)
+    team_email = db.Column(db.String(150),nullable=False)
+    url = db.Column(db.String(200), unique=True, nullable=False)
     swagger = db.Column(db.String(200))
-    bitbucket = db.Column(db.String(200), unique = True)
+    bitbucket = db.Column(db.String(200), unique = True, nullable=False)
     extra_info = db.Column(db.Text(1000))
-    production_pods = db.Column(db.Integer)
+    production_pods = db.Column(db.Integer, nullable=False)
     server = db.Column(db.String(50), db.ForeignKey('server.name'))
 
     @staticmethod

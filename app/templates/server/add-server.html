@@ -11,7 +11,7 @@
     {{ form.hidden_tag() }}
     <dl>
         {{ render_field(form.name, class='form-control mt-4', placeholder='Name') }}
-        {% if not form.name.errors %}
+        {% if not form.name.errors or server_form_error.NAME_EXISTS.value in form.name.errors %}
         <div class="form-text n-mt-3 mb-2"> Server name can only contain letters, numbers and hyphens with no spaces i.e: ab-1234 </div>
         {% endif %}
         {{ render_field(form.cpu, class='form-control', placeholder='CPU') }}

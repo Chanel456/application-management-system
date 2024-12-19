@@ -22,7 +22,7 @@
         <div class="form-text n-mt-3 mb-2">Swagger URL should begin with http:// or https://</div>
         {% endif %}
         {{ render_field(form.bitbucket, class='form-control', placeholder='Application bitbucket') }}
-        {% if not form.bitbucket.errors %}
+        {% if not form.bitbucket.errors or application_form_error.BITBUCKET_EXISTS.value in form.bitbucket.errors %}
         <div class="form-text n-mt-3 mb-2"> Bitbucket URL should begin with: https://bitbucket.org</div>
         {% endif %}
         {{ render_field(form.server, class='form-select', placeholder='Server') }}

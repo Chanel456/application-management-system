@@ -9,26 +9,30 @@ from flask_login import UserMixin
 
 class User(db.Model, UserMixin):
     """
-    A class to represent the relational database table used to store the credentials and other information of users for the web app
+    A class to represent the relational database table used to store the credentials and other information of users for the web application
 
     Columns
     -------------------
-    id: int
+    id: Integer
         user id
-    email: str
-        user email
-    password: str
-        user's password for accessing the application
-    is_admin: boolean
-        stores if this user has an admin role
+    first_name: VARCHAR(150)
+        User's first name
+    last_name: VARCHAR(150)
+        User's last name
+    email: VARCHAR(150)
+        User's email address
+    password: VARCHAR(20)
+        Password for accessing the application
+    is_admin: Boolean
+        Stores if this user has an admin role. True = user has admin privileges
     """
 
     id = db.Column(db.Integer, primary_key = True)
-    email = db.Column(db.String(150), unique = True)
-    password = db.Column(db.String(20))
-    first_name = db.Column(db.String(150))
-    last_name = db.Column(db.String(150))
-    is_admin = db.Column(db.Boolean)
+    email = db.Column(db.String(150), unique = True, nullable=False)
+    password = db.Column(db.String(20), nullable=False)
+    first_name = db.Column(db.String(150), nullable=False)
+    last_name = db.Column(db.String(150), nullable=False)
+    is_admin = db.Column(db.Boolean, nullable=False)
 
     @staticmethod
     def find_user_by_email(email):
@@ -42,6 +46,7 @@ class User(db.Model, UserMixin):
 
     @staticmethod
     def add_user(email, first_name, last_name, password, is_admin):
+        """Add user to User table"""
         try:
             new_user = User(email=email, first_name=first_name, last_name=last_name,
                             password=generate_password_hash(password, method='scrypt'), is_admin=is_admin)

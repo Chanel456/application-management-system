@@ -1,5 +1,6 @@
 from flask import g
 
+from app.server.form_errors import ServerFormError
 from app.server.forms import ServerForm
 from app.shared.shared import FormType
 
@@ -26,4 +27,4 @@ def test_form_invalid_input_validation_fails(app):
             g.form_type = FormType.CREATE.value
             form = ServerForm(data = {'name': 'io-1234', 'cpu': 4567, 'memory': 23458, 'location': 'N0t V$L1D'})
             assert form.validate() == False
-            assert form.errors.get('location')[0] == 'Location can only contain alphabetic characters'
+            assert form.errors.get('location')[0] == ServerFormError.INVALID_LOCATION_FORMAT.value

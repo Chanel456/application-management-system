@@ -7,15 +7,34 @@ from sqlalchemy.exc import SQLAlchemyError
 from app import db
 
 class Server (db.Model):
+    """
+        A class to represent the relational database table used to store the details of a department server
+
+        Columns
+        -------------------
+        id: Integer
+            user id
+        name: VARCHAR(50)
+            Name of the server
+        CPU: Integer
+            The amount of CPU the server has
+        Memory: Integer
+            The amount of memory the server has
+        Location: VARCHAR(50)
+            The location of the server
+        applications:
+            Convenient way to access all the applications related to a server
+        """
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique= True)
-    cpu = db.Column(db.Integer)
-    memory = db.Column(db.Integer)
-    location = db.Column(db.String(50))
+    name = db.Column(db.String(50), unique= True, nullable=False)
+    cpu = db.Column(db.Integer, nullable=False)
+    memory = db.Column(db.Integer, nullable=False)
+    location = db.Column(db.String(50), nullable=False)
     applications = db.relationship('Application')
 
     @staticmethod
     def fetch_server_with_entity(entity):
+        """Selects all entries for specified column in Server table"""
         try:
             result = Server.query.with_entities(entity)
             return result

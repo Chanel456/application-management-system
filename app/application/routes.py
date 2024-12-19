@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 
 from app.application import application
 from app.application.forms import ApplicationForm
+from app.application.form_errors import ApplicationFormError
 from app.models.application import Application
 from app.models.server import Server
 from app.shared.shared import FormType
@@ -27,7 +28,7 @@ def create():
                                         form.swagger.data, form.bitbucket.data, form.production_pods.data,
                                         form.extra_info.data, form.server.data)
 
-    return render_template('application/add-application.html', user=current_user, form=form)
+    return render_template('application/add-application.html', user=current_user, form=form, application_form_error = ApplicationFormError)
 
 @application.route('/update', methods=['POST', 'GET'])
 @login_required
@@ -53,7 +54,7 @@ def update():
             message = f'Application {retrieved_application.name} cannot be updated as they do not exist'
             flash(message, category='error',)
 
-    return render_template('application/update-application.html', user = current_user, application = retrieved_application, form = form)
+    return render_template('application/update-application.html', user = current_user, application = retrieved_application, form = form, application_form_error = ApplicationFormError)
 
 @application.route('/delete', methods=['GET', 'POST'])
 @login_required

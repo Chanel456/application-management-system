@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 
 from app.models.server import Server
 from app.server import server
+from app.server.form_errors import ServerFormError
 from app.server.forms import ServerForm
 from app.shared.shared import FormType
 
@@ -20,7 +21,7 @@ def create():
     if request.method == 'POST' and form.validate_on_submit():
             Server.create_server(form.name.data, form.cpu.data, form.memory.data, form.location.data)
 
-    return render_template('server/add-server.html', user=current_user, form=form)
+    return render_template('server/add-server.html', user=current_user, form=form, server_form_error= ServerFormError)
 
 @server.route('/update', methods=['GET', 'POST'])
 @login_required
@@ -46,7 +47,7 @@ def update():
             message = f'Server {retrieved_server.name} cannot be updated as they do not exist'
             flash(message, category='error', )
 
-    return render_template('server/update-server.html', user=current_user, form=form, server = retrieved_server)
+    return render_template('server/update-server.html', user=current_user, form=form, server = retrieved_server, server_form_error= ServerFormError)
 
 
 @server.route('/delete', methods=['GET'])

@@ -5,7 +5,9 @@ from werkzeug.security import check_password_hash
 from wtforms import validators, StringField, EmailField, PasswordField, RadioField
 from wtforms.validators import DataRequired, ValidationError
 
+from app.auth.form_errors import LoginFormErrors, RegistrationFormError
 from app.models.user import User
+from app.shared.shared import GeneralFormError
 
 class RegistrationForm(FlaskForm):
     """
@@ -27,15 +29,15 @@ class RegistrationForm(FlaskForm):
         Confirm the password used to sign to the account
     """
     account_type = RadioField('Select Account Type:',[DataRequired()], choices=[('admin','Admin'),('regular','Regular')])
-    email = EmailField('Email', [DataRequired(), validators.Length(max=150, message='Email address cannot exceed 150 characters')])
-    first_name = StringField('First Name', [DataRequired(), validators.Length(min=2, max=150, message='First name cannot exceed 150 characters'),
-                                            validators.Regexp('^[A-Za-z-]+$', message='First name must only contain alphabetic characters and hyphens. First name cannot start or end with a hyphen')])
-    last_name = StringField('Last Name', [DataRequired(), validators.Length(min=2, max=150, message='Last name cannot exceed 150 characters'),
-                                          validators.Regexp('^[A-Za-z-]+$', message='Last name must only contain alphabetic characters and hyphens. Last name cannot start or end with a hyphen')])
+    email = EmailField('Email', [DataRequired(), validators.Length(max=150, message=GeneralFormError.INVALID_EMAIL_LENGTH.value)])
+    first_name = StringField('First Name', [DataRequired(), validators.Length(min=2, max=150, message=RegistrationFormError.INVALID_FIRST_NAME_LENGTH.value),
+                                            validators.Regexp('^[A-Za-z-]+$', message=RegistrationFormError.INVALID_FIRST_NAME_FORMAT.value)])
+    last_name = StringField('Last Name', [DataRequired(), validators.Length(min=2, max=150, message= RegistrationFormError.INVALID_LAST_NAME_LENGTH.value),
+                                          validators.Regexp('^[A-Za-z-]+$', message=RegistrationFormError.INVALID_LAST_NAME_FORMAT.value)])
     password = PasswordField('Password', [DataRequired(),
-                                          validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_+])[A-Za-z\d!@#$%^&*_+]{7,20}$', message='Password does not meet the requirements'),
-                                          validators.Length(min=7, max=20, message='Password cannot exceed 20 characters'), validators.EqualTo('confirm_password', message='Passwords must match')])
-    confirm_password = PasswordField('Confirm Password', [DataRequired(), validators.Length(min=7, max=20), validators.EqualTo('password', message='Passwords must match')])
+                                          validators.Regexp('^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_+])[A-Za-z\d!@#$%^&*_+]{7,20}$', message=RegistrationFormError.PASSWORD_DOES_NOT_MEET_REQUIREMENTS.value),
+                                          validators.Length(min=7, max=20, message=RegistrationFormError.INVALID_PASSWORD_LENGTH.value), validators.EqualTo('confirm_password', message=RegistrationFormError.PASSWORDS_DO_NOT_MATCH.value)])
+    confirm_password = PasswordField('Confirm Password', [DataRequired(), validators.Length(min=7, max=20, message=RegistrationFormError.INVALID_PASSWORD_LENGTH.value), validators.EqualTo('password', message=RegistrationFormError.PASSWORDS_DO_NOT_MATCH.value)])
 
 
     def validate_email(self, field):
@@ -43,10 +45,10 @@ class RegistrationForm(FlaskForm):
         user = User.find_user_by_email(field.data)
 
         if user:
-            raise ValidationError('An account with this email address already exists. Please login')
+            raise ValidationError(RegistrationFormError.EMAIL_EXISTS.value)
 
         if not valid_package.email(field.data):
-            raise ValidationError('Please enter a valid email')
+            raise ValidationError(GeneralFormError.INVALID_EMAIL.value)
 
 class LoginForm(FlaskForm):
     """
@@ -67,4 +69,4 @@ class LoginForm(FlaskForm):
 
         user = User.find_user_by_email(self.login_email.data)
         if user and not check_password_hash(user.password, field.data):
-            raise ValidationError('Incorrect email or password')
+            raise ValidationError(LoginFormErrors.INCORRECT_EMAIL_OR_PASSWORD.value)
