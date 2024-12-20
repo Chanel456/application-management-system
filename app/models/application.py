@@ -20,10 +20,12 @@ class Application(db.Model):
             Name of the team who is responsible for maintaining the application
         team_email: VARCHAR(150)
             Email address of the team responsible for maintaining the application
-        url: VARCHAR(150)
+        url: VARCHAR(200)
             Url for the application
-        bitbucket: VARCHAR(150)
+        bitbucket: VARCHAR(200)
             url for the bitbucket repo for the application
+        swagger: VARCHAR(200)
+            url for the swagger150 for the application
         extra_info: VARCHAR(1000)
             Any extra information about the application
         production_pods: Integer
